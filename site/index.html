@@ -6,7 +6,7 @@
 <title>Maximus Backyard Forecast</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#eef3ee" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0e1712" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Ten-day forecast scored for a German Shepherd's backyard time. Cool and dry days score highest.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Maximus Backyard Forecast">
@@ -52,8 +52,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --page: #0e1712; --panel: #15211a; --panel-2: #1b2a21; --line: #26372c;
-    --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
+    --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
+    --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
     --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
     --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
     --c-cool: #4f93d8; --c-cool-fg: #14261c;
@@ -65,8 +65,8 @@
   }
 }
 :root[data-theme="dark"] {
-  --page: #0e1712; --panel: #15211a; --panel-2: #1b2a21; --line: #26372c;
-  --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
+  --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
+  --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
   --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
   --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
   --c-cool: #4f93d8; --c-cool-fg: #14261c;
@@ -75,18 +75,6 @@
   --c-rain: #5f5bb0; --c-rain-fg: #ffffff;
   --g-great: #4fb055; --g-good: #5a9be0; --g-fair: #d9a530; --g-rough: #e5604a;
   --bar-now: #3c6ea6; --bar-ref: #a85a12;
-}
-
-/* Black background option for dark mode: add ?bg=black to the link */
-@media (prefers-color-scheme: dark) {
-  :root.black:not([data-theme="light"]) {
-    --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
-    --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
-  }
-}
-:root.black[data-theme="dark"] {
-    --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
-    --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
 }
 
 /* ---------- base ---------- */
@@ -313,7 +301,6 @@ footer a { color: var(--ink-2); }
   "use strict";
   // ---------- theme (per-viewer convenience only)
   const root = document.documentElement;
-  try { if (new URLSearchParams(location.search).get('bg') === 'black') root.classList.add('black'); } catch (e) {}
   const btn = document.getElementById('themeBtn');
   const modes = ['auto', 'light', 'dark'], names = { auto: 'Auto theme', light: 'Light theme', dark: 'Dark theme' };
   let mode = 'auto';
