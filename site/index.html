@@ -5,481 +5,502 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Maximus Backyard Forecast</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='40' r='13' fill='%232a78d6'/%3E%3Ccircle cx='15' cy='24' r='7' fill='%232a78d6'/%3E%3Ccircle cx='27' cy='14' r='7' fill='%232a78d6'/%3E%3Ccircle cx='41' cy='14' r='7' fill='%232a78d6'/%3E%3Ccircle cx='51' cy='26' r='7' fill='%232a78d6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#eef3ee">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='40' r='13' fill='%235e8b4e'/%3E%3Ccircle cx='15' cy='24' r='7' fill='%235e8b4e'/%3E%3Ccircle cx='27' cy='14' r='7' fill='%235e8b4e'/%3E%3Ccircle cx='41' cy='14' r='7' fill='%235e8b4e'/%3E%3Ccircle cx='51' cy='26' r='7' fill='%235e8b4e'/%3E%3C/svg%3E">
 <style>
+/* ---------- tokens ---------- */
 :root {
-  --bg: #f4f3ef;
-  --surface: #fcfcfb;
-  --surface-2: #efeee9;
-  --line: #e2e0d9;
-  --grid: #e9e7e1;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --ink-3: #75736d;
-  --accent: #2a78d6;
-  --accent-soft: #dceafb;
-  --great: #0ca30c;
-  --good: #2a78d6;
-  --fair: #c98a00;
-  --rough: #d03b3b;
-  --rain: #2a78d6;
-  --heat: #e06a2c;
-  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 10px rgba(0,0,0,.04);
+  --page: #eef3ee;          /* morning mist over the lawn */
+  --panel: #fbfcfa;
+  --panel-2: #f2f5f1;
+  --line: #d9e1d8;
+  --ink: #1d3328;           /* live-oak green, used as "black" */
+  --ink-2: #4b5f53;
+  --ink-3: #6f8075;
+  --lawn: #5e8b4e;
+  --lawn-hi: #8fbf6f;
+  --tan: #b9834f;           /* shepherd tan, used for highlights */
+  --sun: #d98a2b;
+  --rain: #4f78a8;
+  --easy: #3f8f3a;
+  --watch: #c48a12;
+  --hot: #c4472f;
+
+  --sky-cool-a: #7fb8de; --sky-cool-b: #dbeef7;
+  --sky-warm-a: #9cc0d8; --sky-warm-b: #f3e6c8;
+  --sky-hot-a:  #e5b46a; --sky-hot-b:  #f8e6c6;
+  --sky-show-a: #9fb3c8; --sky-show-b: #e1e8ef;
+  --sky-rain-a: #8c9cb2; --sky-rain-b: #d6dde6;
+
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --r-lg: 22px; --r-md: 14px; --r-sm: 9px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111110; --surface: #1a1a19; --surface-2: #232321; --line: #2f2f2c; --grid: #2a2a28;
-    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #9a998f;
-    --accent: #3987e5; --accent-soft: #1d2f47;
-    --great: #2fbf2f; --good: #3987e5; --fair: #fab219; --rough: #e25555;
-    --rain: #3987e5; --heat: #ec835a;
-    --shadow: none;
+    --page: #0e1712; --panel: #15211a; --panel-2: #1b2a21; --line: #26372c;
+    --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
+    --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
+    --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
+    --sky-cool-a: #24476a; --sky-cool-b: #1a2d3a;
+    --sky-warm-a: #34506a; --sky-warm-b: #3a3526;
+    --sky-hot-a:  #6b4a1f; --sky-hot-b:  #3b2d1a;
+    --sky-show-a: #3a4a5c; --sky-show-b: #222c36;
+    --sky-rain-a: #344257; --sky-rain-b: #1d2530;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111110; --surface: #1a1a19; --surface-2: #232321; --line: #2f2f2c; --grid: #2a2a28;
-  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #9a998f;
-  --accent: #3987e5; --accent-soft: #1d2f47;
-  --great: #2fbf2f; --good: #3987e5; --fair: #fab219; --rough: #e25555;
-  --rain: #3987e5; --heat: #ec835a;
-  --shadow: none;
+  --page: #0e1712; --panel: #15211a; --panel-2: #1b2a21; --line: #26372c;
+  --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
+  --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
+  --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
+  --sky-cool-a: #24476a; --sky-cool-b: #1a2d3a;
+  --sky-warm-a: #34506a; --sky-warm-b: #3a3526;
+  --sky-hot-a:  #6b4a1f; --sky-hot-b:  #3b2d1a;
+  --sky-show-a: #3a4a5c; --sky-show-b: #222c36;
+  --sky-rain-a: #344257; --sky-rain-b: #1d2530;
 }
+
+/* ---------- base ---------- */
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
-  background: var(--bg); color: var(--ink);
-  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--page); color: var(--ink);
+  font: 16px/1.55 var(--body);
   -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 1080px; margin: 0 auto; padding: 28px 16px 48px; }
-header { display: flex; gap: 16px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
-h1 { font-size: 28px; line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
-.sub { color: var(--ink-2); margin: 6px 0 0; }
-.updated { color: var(--ink-3); font-size: 13px; text-align: right; }
-.theme-btn {
-  margin-top: 6px; background: none; border: 1px solid var(--line); color: var(--ink-2);
-  border-radius: 8px; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer;
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--tan); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 22px 20px 56px; }
+
+/* ---------- top bar ---------- */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.brand svg { width: 26px; height: 26px; color: var(--lawn); }
+.top-right { display: flex; align-items: center; gap: 12px; color: var(--ink-3); font-size: 14px; }
+.theme-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+
+/* ---------- hero ---------- */
+.hero { padding: 42px 0 30px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 32px; align-items: end; }
+.hero h1 {
+  font-family: var(--display); font-weight: 800; font-size: clamp(38px, 6.2vw, 72px);
+  line-height: 0.98; letter-spacing: -0.035em; margin: 0; max-width: 13ch;
+  font-variation-settings: "opsz" 96;
 }
-.notes { margin: 18px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--surface-2); color: var(--ink-2); font-size: 14px; }
+.hero p { margin: 16px 0 0; font-size: 18px; color: var(--ink-2); max-width: 46ch; }
+.hero-facts { display: grid; gap: 2px; background: var(--line); border-radius: var(--r-md); overflow: hidden; }
+.fact { background: var(--panel); padding: 14px 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.fact span { color: var(--ink-3); font-size: 14px; }
+.fact b { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; text-align: right; }
+.notes { margin: 0 0 16px; padding: 12px 16px; border-radius: var(--r-md); background: var(--panel-2); color: var(--ink-2); font-size: 15px; border-left: 4px solid var(--watch); }
 .notes:empty { display: none; }
 
-/* best days banner */
-.picks {
-  margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-  padding: 18px 20px; box-shadow: var(--shadow);
+/* ---------- the sky strip (signature element) ---------- */
+.strip-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.strip-head h2 { font-family: var(--display); font-size: 22px; letter-spacing: -0.02em; margin: 0; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ink-3); font-size: 13px; }
+.legend i { display: inline-block; width: 18px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.strip {
+  display: grid; grid-template-columns: repeat(10, minmax(84px, 1fr)); gap: 8px;
+  overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 10px; margin: 0 -4px;
+  scrollbar-width: thin;
 }
-.picks h2 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
-.picks .big { font-size: 22px; font-weight: 650; }
-.picks .why { color: var(--ink-2); margin-top: 4px; }
+.day {
+  scroll-snap-align: start; position: relative; border: 0; cursor: pointer; text-align: left;
+  border-radius: var(--r-md); padding: 12px 11px 0; min-height: 214px; overflow: hidden;
+  display: flex; flex-direction: column; background: linear-gradient(180deg, var(--a) 0%, var(--b) 72%);
+  box-shadow: inset 0 0 0 1px rgba(29,51,40,.08);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.day:hover { transform: translateY(-2px); }
+.day[aria-selected="true"] { box-shadow: inset 0 0 0 2px var(--ink), 0 8px 22px -12px rgba(29,51,40,.55); transform: translateY(-3px); }
+.sky-cool { --a: var(--sky-cool-a); --b: var(--sky-cool-b); }
+.sky-warm { --a: var(--sky-warm-a); --b: var(--sky-warm-b); }
+.sky-hot  { --a: var(--sky-hot-a);  --b: var(--sky-hot-b); }
+.sky-show { --a: var(--sky-show-a); --b: var(--sky-show-b); }
+.sky-rain { --a: var(--sky-rain-a); --b: var(--sky-rain-b); }
+.day .wd { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }
+.day .dt { font-size: 13px; color: var(--ink-2); }
+.day .icon { width: 34px; height: 34px; margin: 10px 0 4px; color: var(--ink); }
+.day .feels { font-size: 13px; color: var(--ink-2); }
+.day .feels b { font-size: 15px; color: var(--ink); }
+.day .score { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.04em; margin-top: auto; padding-bottom: 6px; position: relative; z-index: 1; }
+.day .grass { margin: 0 -11px; height: var(--h); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
+.day .grass::before { /* blades along the top edge */
+  content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 7px;
+  background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
+}
+.day .pick { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; color: var(--tan); }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .day .grass { animation: none; } .day, .day:hover { transition: none; transform: none; } }
 
-/* chart */
-.panel {
-  margin-top: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-  padding: 16px 18px 12px; box-shadow: var(--shadow);
-}
-.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.panel h2 { margin: 0; font-size: 16px; }
-.panel .hint { color: var(--ink-3); font-size: 13px; }
-.chart { position: relative; margin-top: 8px; }
-.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-.chart text { fill: var(--ink-3); font-size: 11px; }
-.chart .lbl { fill: var(--ink-2); font-size: 11px; font-weight: 600; }
-.chart .bar { fill: var(--accent); pointer-events: none; }
-.chart svg text { pointer-events: none; }
-.chart .bar.dim { opacity: .45; }
-.chart .hit { fill: transparent; cursor: pointer; }
-.chart .hit:hover + .bar, .chart .bar.hover { opacity: 1; filter: brightness(1.08); }
-.tip {
-  position: absolute; pointer-events: none; background: var(--ink); color: var(--surface);
-  font-size: 12px; line-height: 1.4; padding: 7px 9px; border-radius: 8px; white-space: nowrap;
-  transform: translate(-50%, -100%); opacity: 0; transition: opacity .1s;
-}
-.tip.on { opacity: 1; }
-.tip b { font-weight: 650; }
+/* ---------- detail ---------- */
+.detail { margin-top: 18px; background: var(--panel); border-radius: var(--r-lg); border: 1px solid var(--line); padding: 26px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 34px; }
+.d-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.d-title { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.02; letter-spacing: -0.03em; margin: 0; }
+.d-sub { color: var(--ink-2); margin-top: 6px; }
+.grade { display: flex; flex-direction: column; align-items: flex-end; flex: none; }
+.grade .num { font-family: var(--display); font-weight: 800; font-size: 54px; line-height: .9; letter-spacing: -0.05em; }
+.grade .of { color: var(--ink-3); font-size: 13px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; font-size: 14px; padding: 3px 11px 3px 9px; border-radius: 999px; background: var(--panel-2); margin-top: 6px; }
+.pill i { width: 9px; height: 9px; border-radius: 50%; }
+.d-summary { font-size: 18px; margin: 18px 0 20px; max-width: 46ch; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--line); }
+.stat { padding: 13px 0; border-bottom: 1px solid var(--line); }
+.stat:nth-child(odd) { padding-right: 16px; }
+.stat:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--line); }
+.stat span { display: block; color: var(--ink-3); font-size: 13px; }
+.stat b { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+.stat small { color: var(--ink-2); font-size: 13px; display: block; }
+.stretch { margin-top: 20px; display: flex; gap: 14px; align-items: center; background: var(--panel-2); border-radius: var(--r-md); padding: 14px 16px; }
+.stretch svg { width: 30px; height: 30px; color: var(--sun); flex: none; }
+.stretch b { font-family: var(--display); font-size: 18px; }
+.stretch div { color: var(--ink-2); font-size: 15px; }
+.d-meta { margin-top: 16px; color: var(--ink-3); font-size: 13px; display: flex; gap: 18px; flex-wrap: wrap; }
 
-/* day cards */
-.grid { margin-top: 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-.card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
-  box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px;
-}
-.card.pick { border-color: var(--great); box-shadow: 0 0 0 1px var(--great) inset, var(--shadow); }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.day { font-size: 18px; font-weight: 650; line-height: 1.2; }
-.date { color: var(--ink-3); font-size: 13px; }
-.sky { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
-.score { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: none; }
-.ring { width: 58px; height: 58px; }
-.ring .track { stroke: var(--surface-2); }
-.ring .val { font-size: 17px; font-weight: 700; fill: var(--ink); }
-.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
-.chip i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.badge { display: inline-block; font-size: 11px; font-weight: 700; color: var(--great); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
-.summary { margin: 0; font-size: 14px; color: var(--ink); }
-.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin: 0; }
-.facts div { min-width: 0; }
-.facts dt { color: var(--ink-3); font-size: 12px; }
-.facts dd { margin: 0; font-weight: 600; font-size: 14px; }
-.facts dd small { font-weight: 400; color: var(--ink-2); font-size: 12px; }
-.stretch { background: var(--accent-soft); border-radius: 10px; padding: 8px 11px; font-size: 14px; }
-.stretch b { font-weight: 650; }
-.meta { display: flex; justify-content: space-between; gap: 8px; color: var(--ink-3); font-size: 12px; flex-wrap: wrap; }
-.pm { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; display: flex; flex-direction: column; gap: 6px; }
-.pm-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.pm-head b { font-weight: 650; }
-.pm-head small { color: var(--ink-3); font-weight: 400; }
-.pm .line { color: var(--ink-2); }
-.pm .line b { color: var(--ink); font-weight: 650; }
-.cmp svg { display: block; width: 100%; height: auto; }
-.cmp text { font-size: 11px; fill: var(--ink-2); }
-.cmp .now { fill: var(--accent); }
-.cmp .ref { fill: var(--heat); }
-details summary { cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; list-style: none; }
-details summary::-webkit-details-marker { display: none; }
-details summary::before { content: "▸ "; }
-details[open] summary::before { content: "▾ "; }
-.hours { margin-top: 10px; }
-.hours h4 { margin: 8px 0 2px; font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.pm h3, .hours h3 { font-family: var(--display); font-size: 20px; letter-spacing: -0.02em; margin: 0; }
+.pm-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pm-when { color: var(--ink-3); font-size: 14px; }
+.pm-lead { font-size: 17px; margin: 12px 0 14px; }
+.vs { display: grid; gap: 10px; }
+.vs-row { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); }
+.vs-track { position: relative; height: 26px; background: var(--panel-2); border-radius: 7px; }
+.vs-bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-weight: 700; font-size: 14px; color: #fff; min-width: 46px; }
+.vs-bar.now { background: var(--rain); }
+.vs-bar.ref { background: var(--sun); }
+.pm-lines { margin-top: 14px; color: var(--ink-2); font-size: 15px; display: grid; gap: 4px; }
+.pm-lines b { color: var(--ink); }
+.hours { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.mini { margin-top: 10px; }
+.mini-label { font-size: 13px; color: var(--ink-3); margin-top: 10px; }
 .mini svg { display: block; width: 100%; height: auto; }
-.mini text { fill: var(--ink-3); font-size: 9px; }
-.mini .v { fill: var(--ink-2); font-size: 9px; font-weight: 600; }
-.mini .heat { fill: var(--heat); }
-.mini .rain { fill: var(--rain); }
-.parts { display: flex; gap: 10px; margin-top: 8px; font-size: 12px; color: var(--ink-2); flex-wrap: wrap; }
+.mini text { fill: var(--ink-3); font-size: 10px; font-family: var(--body); }
+.mini .v { fill: var(--ink); font-weight: 700; }
+.mini .heat { fill: var(--sun); }
+.mini .wet { fill: var(--rain); }
+.parts { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
 
-/* explainer */
-.how { margin-top: 26px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-.how section { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
-.how h2 { font-size: 16px; margin: 0 0 8px; }
-.how p, .how li { color: var(--ink-2); font-size: 14px; margin: 0 0 8px; }
-.how ul { padding-left: 18px; margin: 0; }
-footer { margin-top: 26px; color: var(--ink-3); font-size: 12px; }
+/* ---------- explainers ---------- */
+.explain { margin-top: 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+.explain h2 { font-family: var(--display); font-size: 19px; letter-spacing: -0.02em; margin: 0 0 8px; }
+.explain p, .explain li { color: var(--ink-2); font-size: 15px; margin: 0 0 9px; }
+.explain ul { padding-left: 18px; margin: 0 0 9px; }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; }
 footer a { color: var(--ink-2); }
-.err { margin-top: 30px; padding: 20px; background: var(--surface); border-radius: 14px; border: 1px solid var(--line); }
-table.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-@media (max-width: 520px) {
-  h1 { font-size: 23px; }
-  .updated { text-align: left; }
-  .grid { grid-template-columns: 1fr; }
+.err { margin-top: 30px; padding: 22px; background: var(--panel); border-radius: var(--r-lg); border: 1px solid var(--line); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 28px; gap: 22px; }
+  .detail { grid-template-columns: 1fr; padding: 20px; gap: 26px; }
+  .explain { grid-template-columns: 1fr; gap: 18px; }
+  .strip { grid-template-columns: repeat(10, 84px); }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 16px 16px 40px; }
+  .top-right .upd { display: none; }
+  .d-title { font-size: 28px; }
+  .grade .num { font-size: 44px; }
+  .vs-row { grid-template-columns: 92px 1fr; }
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <div class="top">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="40" r="13"/><circle cx="15" cy="24" r="7"/><circle cx="27" cy="14" r="7"/><circle cx="41" cy="14" r="7"/><circle cx="51" cy="26" r="7"/></svg>
+      <span id="brandName">Maximus Backyard Forecast</span>
+    </div>
+    <div class="top-right">
+      <span class="upd" id="updated">Loading the forecast</span>
+      <button class="theme-btn" id="themeBtn" type="button">Auto theme</button>
+    </div>
+  </div>
+
+  <section class="hero" aria-live="polite">
     <div>
-      <h1 id="title">Maximus Backyard Forecast</h1>
-      <p class="sub">Next 10 days, scored for backyard time. He loves it outside when it is cool and dry.</p>
+      <h1 id="headline">Checking the yard</h1>
+      <p id="lede">Ten days of weather, scored for the hours he spends outside watching birds and rabbits.</p>
     </div>
-    <div class="updated">
-      <div id="updated">Loading…</div>
-      <button class="theme-btn" id="themeBtn" type="button">Theme: auto</button>
-    </div>
-  </header>
+    <div class="hero-facts" id="heroFacts"></div>
+  </section>
 
   <div class="notes" id="notes"></div>
 
   <div id="app"></div>
 
-  <div class="how">
+  <div class="explain">
     <section>
       <h2>How the score works</h2>
-      <p>Each day gets a score from 0 to 100. Only daylight hours from <span id="dayHours">7 AM until 30 minutes before sunset</span> count, since that is when he is out in the yard.</p>
+      <p>Each day gets a score from 0 to 100, shown as the height of the grass. Only daylight hours from <span id="dayHours">7 AM until 30 minutes before sunset</span> count.</p>
       <ul>
-        <li><b>Rain (40%)</b>: 100 minus the highest chance of rain during those hours.</li>
-        <li><b>Heat (35%)</b>: based on the hottest daylight "feels like" temperature. <span id="tempRange">65°F or cooler scores 100. 95°F or hotter scores 0.</span></li>
-        <li><b>Humidity (25%)</b>: compares the day's dew point to normal for that date. <span id="dewRange">Normal scores 50. 8°F drier scores 100. 8°F muggier scores 0.</span></li>
+        <li><b>Rain, 40%</b>: 100 minus the highest chance of rain.</li>
+        <li><b>Heat, 35%</b>: the hottest feels-like temperature. <span id="tempRange">65°F or cooler scores 100. 95°F or hotter scores 0.</span></li>
+        <li><b>Humidity, 25%</b>: dew point compared with normal for the date. <span id="dewRange">Normal scores 50. 8°F drier scores 100. 8°F muggier scores 0.</span></li>
       </ul>
-      <p>Great is 75 and up. Good is 60 to 74. Fair is 45 to 59. Rough is below 45. Up to three days scoring 60 or more get a "Best pick" tag.</p>
+      <p>Great is 75 and up. Good is 60 to 74. Fair is 45 to 59. Rough is below 45. Up to three days scoring 60 or more get a paw mark as best picks.</p>
     </section>
     <section>
       <h2>What the numbers mean</h2>
-      <p><b>Dew point</b> is the best single measure of how sticky the air feels. Higher means muggier. Around 60°F feels fine to most people. 70°F and up feels heavy.</p>
-      <p><b>Feels like</b> is the National Weather Service heat index. It combines temperature and humidity. Below about 80°F it equals the air temperature.</p>
-      <p><b>Nice hours</b> counts the daylight hours that are <span id="niceRule">80°F or cooler (feels like) with under a 30% chance of rain</span>. More nice hours means a longer stay outside.</p>
-      <p><b>Afternoon check</b> looks only at 1 PM until he comes in. It compares the hottest the afternoon will feel with a typical July afternoon at the same spot, from 20 years of history<span id="summerRef"></span>. Labels: <span id="pmRule">80°F or cooler is an easy afternoon. 81 to 90°F means keep an eye on him. Above 90°F means short visits only.</span></p>
+      <p><b>Dew point</b> is the best measure of how sticky the air feels. Higher is muggier. Around 60°F feels fine. 70°F and up feels heavy.</p>
+      <p><b>Feels like</b> is the National Weather Service heat index. Below about 80°F it equals the air temperature.</p>
+      <p><b>Nice hours</b> are daylight hours <span id="niceRule">80°F or cooler (feels like) with under a 30% chance of rain</span>.</p>
+      <p><b>Afternoon check</b> compares the hottest the afternoon will feel with a typical July afternoon at the same spot<span id="summerRef"></span>. <span id="pmRule">80°F or cooler is an easy afternoon. 81 to 90°F means keep an eye on him. Above 90°F means short visits only.</span></p>
       <p><b>Best stretch of the day</b> is the <span id="stretchLen">4</span>-hour block with the best mix of low rain chance and cooler feels-like temperature.</p>
     </section>
     <section>
       <h2>How much to trust it</h2>
-      <p>Days 1 to 7 come from the National Weather Service, the official US forecast. It does not go past 7 days, so days 8 to 10 come from Open-Meteo, which serves the NOAA and European computer models.</p>
-      <p>Forecasts get less reliable the further out they go. The confidence label (High for days 1 to 3, Medium for 4 to 7, Low for 8 to 10) is a general rule, not a measured accuracy number.</p>
-      <p>The score rules are a rule of thumb picked for this dog's stated preferences. They are not a veterinary standard. Very hot days call for your own judgment no matter the score.</p>
+      <p>Days 1 to 7 come from the National Weather Service, the official US forecast. It stops at 7 days, so days 8 to 10 come from Open-Meteo, which serves the NOAA and European computer models.</p>
+      <p>Forecasts get less reliable further out. The confidence label (high for days 1 to 3, medium for 4 to 7, low for 8 to 10) is a general rule, not a measured accuracy number.</p>
+      <p>The score rules are a rule of thumb picked for his stated likes. They are not a veterinary standard. Use your own judgment on hot days.</p>
     </section>
   </div>
 
   <footer>
-    <p>Forecast data: <a href="https://www.weather.gov/documentation/services-web-api" rel="noopener">National Weather Service API</a> (days 1 to 7) and <a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a> (days 8 to 10, CC BY 4.0). Normals: Open-Meteo historical archive (ERA5 reanalysis)<span id="normYears"></span>. Refreshes automatically every few hours.</p>
+    Forecast data from the <a href="https://www.weather.gov/documentation/services-web-api" rel="noopener">National Weather Service API</a> for days 1 to 7 and <a href="https://open-meteo.com/" rel="noopener">weather data by Open-Meteo.com</a> for days 8 to 10 (CC BY 4.0). Normals from the Open-Meteo historical archive (ERA5 reanalysis)<span id="normYears"></span>. The page refreshes itself every 3 hours.
   </footer>
 </div>
 
 <script>
 (function () {
-  // ---------- theme toggle (per-viewer convenience only)
-  const root = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  const modes = ['auto', 'light', 'dark'];
+  "use strict";
+  // ---------- theme (per-viewer convenience only)
+  const root = document.documentElement, btn = document.getElementById('themeBtn');
+  const modes = ['auto', 'light', 'dark'], names = { auto: 'Auto theme', light: 'Light theme', dark: 'Dark theme' };
   let mode = 'auto';
   try { mode = localStorage.getItem('theme') || 'auto'; } catch (e) {}
-  function applyTheme() {
-    if (mode === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', mode);
-    btn.textContent = 'Theme: ' + mode;
-  }
-  btn.addEventListener('click', () => {
-    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
-    try { localStorage.setItem('theme', mode); } catch (e) {}
-    applyTheme();
-  });
+  function applyTheme() { if (mode === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', mode); btn.textContent = names[mode]; }
+  btn.addEventListener('click', () => { mode = modes[(modes.indexOf(mode) + 1) % 3]; try { localStorage.setItem('theme', mode); } catch (e) {} applyTheme(); });
   applyTheme();
 
+  const GRADE = { Great: '--easy', Good: '--lawn', Fair: '--watch', Rough: '--hot' };
+  const PM = { easy: '--easy', watch: '--watch', hot: '--hot' };
   let MONTH = 'July';
-  const GRADE_VAR = { Great: '--great', Good: '--good', Fair: '--fair', Rough: '--rough' };
+  const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const svgNS = 'http://www.w3.org/2000/svg';
 
-  function fmtDate(iso) {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  function dateOf(iso) { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); }
+  const fmtShort = iso => dateOf(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const fmtLong = iso => dateOf(iso).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  const hourLabel = h => (h % 12 || 12) + (h < 12 ? 'a' : 'p');
+  const dayName = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label : dateOf(d.date).toLocaleDateString(undefined, { weekday: 'long' });
+
+  // ---------- sky look for a day, from its own numbers
+  function skyOf(d) {
+    const pop = d.rain.max_pop, fl = d.temp.feels_high;
+    if (pop >= 50) return { cls: 'sky-rain', icon: /thunder|storm/i.test(d.sky) ? 'storm' : 'rain', label: 'Rain likely' };
+    if (pop >= 30) return { cls: 'sky-show', icon: 'shower', label: 'Some rain risk' };
+    if (fl >= 88) return { cls: 'sky-hot', icon: 'sun', label: 'Hot' };
+    if (fl >= 80) return { cls: 'sky-warm', icon: /cloud|overcast/i.test(d.sky) ? 'cloud' : 'sun', label: 'Warm' };
+    return { cls: 'sky-cool', icon: /cloud|overcast/i.test(d.sky) ? 'cloud' : 'sun', label: 'Cool and dry' };
   }
-  function hourLabel(h) { return (h % 12 || 12) + (h < 12 ? 'a' : 'p'); }
-  function dewText(day) {
-    const a = day.dew.anomaly;
-    if (a == null) return day.dew.mean != null ? `${day.dew.mean}°F` : 'n/a';
-    const r = Math.round(a);
-    const rel = r === 0 ? 'normal' : (r < 0 ? `${-r}° drier than normal` : `${r}° muggier than normal`);
-    return `${day.dew.mean}°F <small>(${rel})</small>`;
+  const ICONS = {
+    sun: '<circle cx="16" cy="16" r="6.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 2.5v3.5M16 26v3.5M2.5 16H6M26 16h3.5M6.4 6.4l2.5 2.5M23.1 23.1l2.5 2.5M6.4 25.6l2.5-2.5M23.1 8.9l2.5-2.5"/></g>',
+    cloud: '<circle cx="11" cy="11" r="5" fill="currentColor" opacity=".55"/><path d="M9 25h14.5a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.2 2.4A4.3 4.3 0 0 0 9 25z" fill="currentColor"/>',
+    shower: '<circle cx="10" cy="9" r="4.5" fill="currentColor" opacity=".55"/><path d="M8 21h15a5 5 0 0 0 0-10 7 7 0 0 0-13.3 2.2A4 4 0 0 0 8 21z" fill="currentColor"/><path d="M12 24.5l-1.2 3M18 24.5l-1.2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    rain: '<path d="M7 18h16a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.2 2.4A4.3 4.3 0 0 0 7 18z" fill="currentColor"/><path d="M10 21.5l-1.6 4M16 21.5l-1.6 4M22 21.5l-1.6 4M13 26.5l-.9 2.2M19 26.5l-.9 2.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    storm: '<path d="M7 17h16a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.2 2.4A4.3 4.3 0 0 0 7 17z" fill="currentColor"/><path d="M17 18.5l-4 6h4l-2.5 5.5 6-7.5h-4l2.5-4z" fill="currentColor"/>'
+  };
+  const icon = (k, cls) => `<svg class="${cls || 'icon'}" viewBox="0 0 32 32" aria-hidden="true">${ICONS[k]}</svg>`;
+  const PAW = '<svg class="pick" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="40" r="13"/><circle cx="15" cy="24" r="7"/><circle cx="27" cy="14" r="7"/><circle cx="41" cy="14" r="7"/><circle cx="51" cy="26" r="7"/></svg>';
+
+  const withDate = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label : `${dayName(d)}, ${fmtShort(d.date)}`;
+  // ---------- hero
+  function hero(data) {
+    const days = data.days, dog = data.dog || 'Maximus';
+    const picks = days.filter(d => d.top_pick).sort((a, b) => b.score - a.score);
+    const best = picks[0] || days.slice().sort((a, b) => b.score - a.score)[0];
+    let head, lede;
+    if (picks.length) {
+      head = `${withDate(best)} looks like ${dog}'s best day.`;
+      const others = picks.slice(1).map(withDate);
+      lede = best.summary + (others.length ? ` ${others.join(' and ')} ${others.length > 1 ? 'also look' : 'also looks'} good.` : '');
+    } else {
+      head = `A warm stretch. Mornings are his best bet.`;
+      lede = `No day scores Good or better in the next ten. The least rough is ${withDate(best)}. ${best.summary}`;
+    }
+    $('headline').textContent = head;
+    $('lede').textContent = lede;
+    const facts = [
+      ['Score', `${best.score}, ${best.grade}`],
+      ['Nice hours outside', `${best.nice_hours} of ${best.total_hours}`],
+      best.best_window ? ['Best stretch', best.best_window.label] : null,
+      best.afternoon ? ['Afternoon', best.afternoon.flag] : null,
+    ].filter(Boolean);
+    $('heroFacts').innerHTML = facts.map(([k, v]) => `<div class="fact"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
   }
 
-  function ring(score, grade) {
-    const r = 24, c = 2 * Math.PI * r, pct = Math.max(0, Math.min(100, score)) / 100;
-    return `<svg class="ring" viewBox="0 0 58 58" aria-hidden="true">
-      <circle class="track" cx="29" cy="29" r="${r}" fill="none" stroke-width="5"/>
-      <circle cx="29" cy="29" r="${r}" fill="none" stroke="var(${GRADE_VAR[grade]})" stroke-width="5"
-        stroke-linecap="round" stroke-dasharray="${(c * pct).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 29 29)"/>
-      <text class="val" x="29" y="35" text-anchor="middle">${score}</text></svg>`;
+  // ---------- strip
+  function strip(days) {
+    const tiles = days.map((d, i) => {
+      const s = skyOf(d);
+      const h = Math.round(8 + d.score * 0.62);   // grass height in px, 8 to 70
+      return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--h:${h}px;--i:${i}"
+          aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d.top_pick ? ' Best pick.' : ''}">
+        ${d.top_pick ? PAW : ''}
+        <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
+        <span class="dt">${fmtShort(d.date)}</span>
+        ${icon(s.icon)}
+        <span class="feels"><b>${d.temp.feels_high}°</b> feels</span>
+        <span class="feels">${d.rain.max_pop}% rain</span>
+        <span class="score">${d.score}</span>
+        <span class="grass" aria-hidden="true"></span>
+      </button>`;
+    }).join('');
+    return `<div class="strip-head"><h2>The next ten days</h2>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:linear-gradient(180deg,var(--sky-cool-a),var(--sky-cool-b))"></i>Cool and dry</span>
+        <span><i style="background:linear-gradient(180deg,var(--sky-warm-a),var(--sky-warm-b))"></i>Warm</span>
+        <span><i style="background:linear-gradient(180deg,var(--sky-hot-a),var(--sky-hot-b))"></i>Hot</span>
+        <span><i style="background:linear-gradient(180deg,var(--sky-rain-a),var(--sky-rain-b))"></i>Rain risk</span>
+        <span><i style="background:var(--lawn)"></i>Taller grass, better day</span>
+      </div></div>
+      <div class="strip" role="tablist" aria-label="Pick a day">${tiles}</div>`;
   }
 
-  // Small hourly bar chart: one measure, one axis.
-  function miniBars(hours, key, cls, unit, maxV, minV) {
-    const w = 300, h = 64, top = 12, bottom = 14, n = hours.length;
-    const bw = w / n, gap = 2;
-    const lo = minV ?? 0, hi = Math.max(maxV, lo + 1);
-    let out = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${unit === '%' ? 'Hourly rain chance' : 'Hourly feels like temperature'}">`;
-    out += `<line x1="0" x2="${w}" y1="${h - bottom}" y2="${h - bottom}" stroke="var(--grid)"/>`;
+  // ---------- hourly mini chart: one measure, one axis
+  function mini(hours, key, cls, unit, lo, hi) {
+    const w = 520, h = 78, top = 14, bottom = 16, n = hours.length, bw = w / n, gap = 3;
+    const y = v => (h - bottom) - Math.max(2, (h - top - bottom) * (Math.max(lo, v) - lo) / (hi - lo));
+    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${unit === '%' ? 'Chance of rain by hour' : 'Feels like temperature by hour'}">`;
+    s += `<line x1="0" x2="${w}" y1="${h - bottom}" y2="${h - bottom}" stroke="var(--line)"/>`;
+    let pi = 0;
     hours.forEach((x, i) => {
-      const v = x[key];
-      const bh = Math.max(1.5, (h - top - bottom) * (v - lo) / (hi - lo));
-      const bx = i * bw + gap / 2, by = h - bottom - bh;
-      out += `<rect class="${cls}" x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(bw - gap).toFixed(1)}" height="${bh.toFixed(1)}" rx="2"><title>${hourLabel(x.h)}: ${v}${unit}</title></rect>`;
-      if (i % 3 === 0) out += `<text x="${(bx + (bw - gap) / 2).toFixed(1)}" y="${h - 3}" text-anchor="middle">${hourLabel(x.h)}</text>`;
+      if (x[key] > hours[pi][key]) pi = i;
+      const bx = i * bw + gap / 2, by = y(x[key]);
+      s += `<rect class="${cls}" x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(bw - gap).toFixed(1)}" height="${(h - bottom - by).toFixed(1)}" rx="3"><title>${hourLabel(x.h)}: ${x[key]}${unit}</title></rect>`;
+      if (n <= 8 || i % 2 === 0) s += `<text x="${(bx + (bw - gap) / 2).toFixed(1)}" y="${h - 3}" text-anchor="middle">${hourLabel(x.h)}</text>`;
     });
-    // label the peak only
-    let pi = 0; hours.forEach((x, i) => { if (x[key] > hours[pi][key]) pi = i; });
     const pv = hours[pi][key];
-    const py = h - bottom - Math.max(1.5, (h - top - bottom) * (pv - lo) / (hi - lo)) - 3;
-    out += `<text class="v" x="${(pi * bw + bw / 2).toFixed(1)}" y="${py.toFixed(1)}" text-anchor="middle">${pv}${unit}</text>`;
-    return out + '</svg>';
+    s += `<text class="v" x="${(pi * bw + bw / 2).toFixed(1)}" y="${(y(pv) - 4).toFixed(1)}" text-anchor="middle">${pv}${unit}</text>`;
+    return s + '</svg>';
   }
 
-  const PM_VAR = { easy: '--great', watch: '--fair', hot: '--rough' };
-  function cmpBars(now, ref, month) {
-    const w = 300, h = 46, left = 92, right = 34, lo = 60, hi = Math.max(110, now + 5, ref + 5);
-    const x = v => left + (w - left - right) * (Math.max(lo, v) - lo) / (hi - lo);
-    const bar = (y, v, cls, label) =>
-      `<text x="0" y="${y + 9}">${label}</text>` +
-      `<rect class="${cls}" x="${left}" y="${y}" width="${Math.max(2, x(v) - left).toFixed(1)}" height="12" rx="3"/>` +
-      `<text x="${(x(v) + 4).toFixed(1)}" y="${y + 9}" style="font-weight:600">${v}°F</text>`;
-    return `<div class="cmp"><svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Hottest feels-like this afternoon ${now}°F versus typical ${month} afternoon ${ref}°F">
-      ${bar(4, now, 'now', 'This afternoon')}${bar(26, ref, 'ref', 'Typical ' + month)}</svg></div>`;
+  // ---------- detail panel
+  function dewText(d) {
+    const a = d.dew.anomaly;
+    if (d.dew.mean == null) return ['n/a', ''];
+    if (a == null) return [`${d.dew.mean}°F`, ''];
+    const r = Math.round(a);
+    return [`${d.dew.mean}°F`, r === 0 ? 'Normal for the date' : (r < 0 ? `${-r}° drier than normal` : `${r}° muggier than normal`)];
   }
-  function afternoonBlock(d) {
+  function afternoon(d) {
     const a = d.afternoon;
-    if (!a) return '';
+    if (!a) return '<div class="pm"><h3>Afternoon</h3><p class="pm-lead">No afternoon hours left today.</p></div>';
     const v = a.vs_summer;
-    let cmp = '';
+    let body = '';
     if (v) {
       const diff = v.feels_better_by;
-      const words = diff > 0 ? `${diff}° easier than a typical ${MONTH} afternoon` :
-        (diff < 0 ? `${-diff}° hotter than a typical ${MONTH} afternoon` : `about the same as a typical ${MONTH} afternoon`);
-      cmp = `<div class="line">Hottest it will feel: <b>${a.peak_feels}°F</b>. That is ${words}.</div>
-        ${cmpBars(a.peak_feels, v.summer_feels, MONTH)}
-        ${a.dew != null && v.dew_lower_by != null ? `<div class="line">Dew point ${a.dew}°F vs ${v.summer_dew}°F in a typical ${MONTH} afternoon${v.dew_lower_by > 0 ? ` (${v.dew_lower_by}° drier)` : (v.dew_lower_by < 0 ? ` (${-v.dew_lower_by}° muggier)` : '')}.</div>` : ''}`;
+      const words = diff > 0 ? `${diff}° easier than a typical ${MONTH} afternoon.` :
+        diff < 0 ? `${-diff}° hotter than a typical ${MONTH} afternoon.` : `About the same as a typical ${MONTH} afternoon.`;
+      const max = Math.max(110, a.peak_feels + 4, v.summer_feels + 4), lo = 50;
+      const pct = x => Math.max(14, (x - lo) / (max - lo) * 100).toFixed(1);
+      body = `<p class="pm-lead">At its hottest it will feel like <b>${a.peak_feels}°F</b>. ${words}</p>
+        <div class="vs" role="img" aria-label="This afternoon ${a.peak_feels} degrees versus typical ${MONTH} afternoon ${v.summer_feels} degrees">
+          <div class="vs-row"><span>This afternoon</span><div class="vs-track"><div class="vs-bar now" style="width:${pct(a.peak_feels)}%">${a.peak_feels}°</div></div></div>
+          <div class="vs-row"><span>Typical ${MONTH}</span><div class="vs-track"><div class="vs-bar ref" style="width:${pct(v.summer_feels)}%">${v.summer_feels}°</div></div></div>
+        </div>
+        <div class="pm-lines">
+          ${a.dew != null && v.dew_lower_by != null ? `<div>Dew point <b>${a.dew}°F</b>, against ${v.summer_dew}°F in a typical ${MONTH} afternoon${v.dew_lower_by > 0 ? `, so ${v.dew_lower_by}° drier` : v.dew_lower_by < 0 ? `, so ${-v.dew_lower_by}° muggier` : ''}.</div>` : ''}
+          <div>Nice afternoon hours: <b>${a.nice_hours} of ${a.total_hours}</b>. Rain chance up to ${a.max_pop}%.${a.rain_note ? ' ' + esc(a.rain_note) + '.' : ''}</div>
+          <div>Sunset about ${esc(d.sunset)}. He comes in before then.</div>
+        </div>`;
     } else {
-      cmp = `<div class="line">Hottest it will feel: <b>${a.peak_feels}°F</b>.</div>`;
+      body = `<p class="pm-lead">At its hottest it will feel like <b>${a.peak_feels}°F</b>.</p>`;
     }
-    return `<div class="pm">
-      <div class="pm-head"><span><b>Afternoon</b> <small>${esc(a.start)} until he comes in</small></span>
-        <span class="chip"><i style="background:var(${PM_VAR[a.level]})"></i>${esc(a.flag)}</span></div>
-      ${cmp}
-      <div class="line">Nice afternoon hours: <b>${a.nice_hours} of ${a.total_hours}</b>. Rain chance up to ${a.max_pop}%.${a.rain_note ? ' ' + esc(a.rain_note) + '.' : ''}</div>
-      <div class="line">Sunset about ${esc(d.sunset)}.</div>
-    </div>`;
+    return `<div class="pm"><div class="pm-top"><h3>Afternoon check</h3>
+      <span class="pill"><i style="background:var(${PM[a.level]})"></i>${esc(a.flag)}</span></div>
+      <div class="pm-when">${esc(a.start)} until he comes in</div>${body}</div>`;
   }
-
-  function card(d) {
-    const bw = d.best_window;
-    return `<article class="card${d.top_pick ? ' pick' : ''}">
-      <div class="card-top">
-        <div>
-          ${d.top_pick ? '<div class="badge">★ Best pick</div>' : ''}
-          <div class="day">${esc(d.label)}${d.partial ? ' <small style="font-weight:400;color:var(--ink-3);font-size:12px">(rest of day)</small>' : ''}</div>
-          <div class="date">${d.label === d.weekday || d.label.startsWith(d.weekday) ? '' : esc(d.weekday) + ', '}${fmtDate(d.date)}</div>
-          <div class="sky">${esc(d.sky)}</div>
+  function detail(d) {
+    const [dew, dewNote] = dewText(d), bw = d.best_window;
+    const fl = d.hourly.map(x => x.f);
+    return `<div>
+        <div class="d-head">
+          <div><h2 class="d-title">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? d.label : fmtLong(d.date).split(',')[0])}</h2>
+            <div class="d-sub">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? fmtLong(d.date) : dateOf(d.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }))}${d.partial ? ', rest of the day' : ''}. ${esc(d.sky)}</div></div>
+          <div class="grade"><span class="num">${d.score}</span><span class="of">out of 100</span>
+            <span class="pill"><i style="background:var(${GRADE[d.grade]})"></i>${esc(d.grade)}</span></div>
         </div>
-        <div class="score" title="Score ${d.score} of 100">
-          ${ring(d.score, d.grade)}
-          <span class="chip"><i style="background:var(${GRADE_VAR[d.grade]})"></i>${d.grade}</span>
+        <p class="d-summary">${esc(d.summary)}</p>
+        <div class="stats">
+          <div class="stat"><span>Nice hours outside</span><b>${d.nice_hours} of ${d.total_hours}</b></div>
+          <div class="stat"><span>Rain chance, worst hour</span><b>${d.rain.max_pop}%</b></div>
+          <div class="stat"><span>Feels like, hottest</span><b>${d.temp.feels_high}°F</b><small>High ${d.temp.high}°, low ${d.temp.low}°${d.temp.normal_high != null ? `, normal high ${d.temp.normal_high}°` : ''}</small></div>
+          <div class="stat"><span>Dew point</span><b>${dew}</b><small>${esc(dewNote)}</small></div>
         </div>
+        ${bw ? `<div class="stretch">${icon('sun', '')}<div><b>Best stretch of the day: ${esc(bw.label)}</b><div>Feels like ${bw.feels}°F at most, ${bw.pop}% chance of rain.</div></div></div>` : ''}
+        <div class="d-meta"><span>Source: ${esc(d.source)}</span><span>Confidence: ${esc(d.confidence)}</span></div>
       </div>
-      <p class="summary">${esc(d.summary)}</p>
-      <dl class="facts">
-        <div><dt>Rain chance (worst hour)</dt><dd>${d.rain.max_pop}%</dd></div>
-        <div><dt>High / low</dt><dd>${d.temp.high}° / ${d.temp.low}°${d.temp.normal_high != null ? ` <small>(normal high ${d.temp.normal_high}°)</small>` : ''}</dd></div>
-        <div><dt>Feels like (hottest)</dt><dd>${d.temp.feels_high}°F</dd></div>
-        <div><dt>Dew point</dt><dd>${dewText(d)}</dd></div>
-      </dl>
-      <div class="stretch">Nice hours outside: <b>${d.nice_hours} of ${d.total_hours}</b>${bw ? `<br>Best stretch of the day: <b>${esc(bw.label)}</b>, feels like ${bw.feels}°F at most, ${bw.pop}% rain chance` : ''}</div>
-      ${afternoonBlock(d)}
-      <details>
-        <summary>Hour by hour</summary>
-        <div class="hours">
-          <h4>Feels like (°F)</h4>
-          <div class="mini">${miniBars(d.hourly, 'f', 'heat', '°', Math.max(...d.hourly.map(x => x.f)), Math.min(50, Math.min(...d.hourly.map(x => x.f)) - 5))}</div>
-          <h4>Chance of rain (%)</h4>
-          <div class="mini">${miniBars(d.hourly, 'p', 'rain', '%', 100, 0)}</div>
-          <div class="parts">Score parts: rain ${d.parts.rain} · heat ${d.parts.temp} · humidity ${d.parts.humidity}</div>
+      <div>
+        ${afternoon(d)}
+        <div class="hours"><h3>Hour by hour</h3>
+          <div class="mini-label">Feels like, °F</div>
+          <div class="mini">${mini(d.hourly, 'f', 'heat', '°', Math.min(50, Math.min(...fl) - 6), Math.max(...fl) + 2)}</div>
+          <div class="mini-label">Chance of rain, %</div>
+          <div class="mini">${mini(d.hourly, 'p', 'wet', '%', 0, 100)}</div>
+          <div class="parts">Score parts: rain ${d.parts.rain}, heat ${d.parts.temp}, humidity ${d.parts.humidity}.</div>
         </div>
-      </details>
-      <div class="meta"><span>Source: ${esc(d.source)}</span><span>Confidence: ${esc(d.confidence)}</span></div>
-    </article>`;
+      </div>`;
   }
 
-  function scoreChart(days, width) {
-    const w = Math.max(300, Math.round(width || 1000)), narrow = w < 560, h = narrow ? 200 : 230, left = 34, right = 8, top = 22, bottom = 40;
-    const pw = w - left - right, ph = h - top - bottom;
-    const n = days.length, slot = pw / n, bw = Math.min(56, slot * 0.6);
-    const y = v => top + ph * (1 - v / 100);
-    let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-labelledby="chartTitle">`;
-    [0, 25, 50, 75, 100].forEach(v => {
-      s += `<line x1="${left}" x2="${w - right}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" ${v === 0 ? '' : 'stroke-dasharray="2 4"'}/>`;
-      s += `<text x="${left - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
-    });
-    days.forEach((d, i) => {
-      const cx = left + slot * i + slot / 2, bx = cx - bw / 2, by = y(d.score), bh = Math.max(2, y(0) - by);
-      // rounded top, square base
-      const r = Math.min(4, bw / 2, bh);
-      const path = `M${bx},${y(0)} V${by + r} Q${bx},${by} ${bx + r},${by} H${bx + bw - r} Q${bx + bw},${by} ${bx + bw},${by + r} V${y(0)} Z`;
-      s += `<rect class="hit" data-i="${i}" x="${cx - slot / 2}" y="${top}" width="${slot}" height="${ph}"/>`;
-      s += `<path class="bar${d.top_pick ? '' : ' dim'}" data-bar="${i}" d="${path}"/>`;
-      if (d.top_pick) s += `<text class="lbl" x="${cx}" y="${by - 7}" text-anchor="middle">${narrow ? '' : '★ '}${d.score}</text>`;
-      s += `<text x="${cx}" y="${h - bottom + 17}" text-anchor="middle" style="fill:var(--ink-2);font-weight:600">${esc(d.weekday)}</text>`;
-      s += `<text x="${cx}" y="${h - bottom + 31}" text-anchor="middle">${narrow ? +d.date.slice(8) : fmtDate(d.date)}</text>`;
-    });
-    s += '</svg>';
-    return s;
-  }
-
-  function wireTooltip(container, days) {
-    const tip = document.createElement('div');
-    tip.className = 'tip';
-    container.appendChild(tip);
-    container.querySelectorAll('.hit').forEach(el => {
-      const i = +el.dataset.i, d = days[i];
-      const bar = container.querySelector(`[data-bar="${i}"]`);
-      el.addEventListener('mouseenter', () => {
-        bar.classList.add('hover');
-        tip.innerHTML = `<b>${esc(d.label)}, ${fmtDate(d.date)}</b><br>Score ${d.score} (${d.grade})<br>Nice hours ${d.nice_hours} of ${d.total_hours}<br>${d.afternoon ? `Afternoon: ${esc(d.afternoon.flag)}, feels ${d.afternoon.peak_feels}°F<br>` : ''}Rain ${d.rain.max_pop}% · Feels ${d.temp.feels_high}°F<br>Dew point ${d.dew.mean ?? 'n/a'}°F${d.dew.anomaly != null ? (Math.round(d.dew.anomaly) === 0 ? ' (normal)' : ` (${d.dew.anomaly > 0 ? '+' : ''}${Math.round(d.dew.anomaly)}° vs normal)`) : ''}`;
-        const box = container.getBoundingClientRect(), r = bar.getBoundingClientRect();
-        let x = r.left - box.left + r.width / 2;
-        x = Math.max(90, Math.min(box.width - 90, x));
-        tip.style.left = x + 'px';
-        tip.style.top = (r.top - box.top - 8) + 'px';
-        tip.classList.add('on');
-      });
-      el.addEventListener('mouseleave', () => { bar.classList.remove('hover'); tip.classList.remove('on'); });
-      el.addEventListener('click', () => {
-        const c = document.querySelectorAll('.card')[i];
-        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    });
-  }
-
-  function joinNames(arr) {
-    if (arr.length <= 1) return arr.join('');
-    return arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
-  }
-
+  // ---------- render
   function render(data) {
     const dog = data.dog || 'Maximus';
-    document.getElementById('title').textContent = `${dog} Backyard Forecast`;
+    $('brandName').textContent = `${dog} Backyard Forecast`;
     document.title = `${dog} Backyard Forecast`;
     const gen = new Date(data.generated_at);
-    document.getElementById('updated').textContent =
-      'Updated ' + gen.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-    document.getElementById('dayHours').textContent = data.day_hours;
+    $('updated').textContent = 'Updated ' + gen.toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' });
+    if (data.day_hours) $('dayHours').textContent = data.day_hours;
+    if (data.temp_range) $('tempRange').textContent = `${data.temp_range[0]}°F or cooler scores 100. ${data.temp_range[1]}°F or hotter scores 0.`;
+    if (data.dew_swing) $('dewRange').textContent = `Normal scores 50. ${data.dew_swing}°F drier scores 100. ${data.dew_swing}°F muggier scores 0.`;
+    if (data.nice_rule) $('niceRule').textContent = `${data.nice_rule[0]}°F or cooler (feels like) with under a ${data.nice_rule[1]}% chance of rain`;
+    if (data.stretch_hours) $('stretchLen').textContent = data.stretch_hours;
     if (data.summer_ref) {
       MONTH = data.summer_ref.month;
-      document.getElementById('summerRef').textContent =
-        ` (a typical ${data.summer_ref.month} afternoon there feels like ${data.summer_ref.feels}°F at its hottest, with a ${data.summer_ref.dew}°F dew point)`;
+      $('summerRef').textContent = ` (a typical ${MONTH} afternoon there feels like ${data.summer_ref.feels}°F at its hottest)`;
     }
-    if (data.afternoon_rule) {
-      const [e, w] = data.afternoon_rule;
-      document.getElementById('pmRule').textContent =
-        `${e}°F or cooler is an easy afternoon. ${e + 1} to ${w}°F means keep an eye on him. Above ${w}°F means short visits only.`;
-    }
-    if (data.nice_rule) document.getElementById('niceRule').textContent =
-      `${data.nice_rule[0]}°F or cooler (feels like) with under a ${data.nice_rule[1]}% chance of rain`;
-    if (data.stretch_hours) document.getElementById('stretchLen').textContent = data.stretch_hours;
-    if (data.temp_range) document.getElementById('tempRange').textContent =
-      `${data.temp_range[0]}°F or cooler scores 100. ${data.temp_range[1]}°F or hotter scores 0.`;
-    if (data.dew_swing) document.getElementById('dewRange').textContent =
-      `Normal scores 50. ${data.dew_swing}°F drier scores 100. ${data.dew_swing}°F muggier scores 0.`;
-    if (data.normals_years) document.getElementById('normYears').textContent = `, ${data.normals_years}`;
-    document.getElementById('notes').innerHTML = (data.notes || []).map(esc).join('<br>');
+    if (data.afternoon_rule) { const [e, w] = data.afternoon_rule; $('pmRule').textContent = `${e}°F or cooler is an easy afternoon. ${e + 1} to ${w}°F means keep an eye on him. Above ${w}°F means short visits only.`; }
+    if (data.normals_years) $('normYears').textContent = `, ${data.normals_years}`;
+    $('notes').innerHTML = (data.notes || []).map(esc).join('<br>');
 
     const days = data.days;
-    const picks = days.filter(d => d.top_pick);
-    let banner;
-    if (picks.length) {
-      const names = picks.map(d => `${d.label === 'Today' || d.label === 'Tomorrow' ? d.label : d.weekday} ${fmtDate(d.date)}`);
-      const best = picks.slice().sort((a, b) => b.score - a.score)[0];
-      banner = `<div class="picks"><h2>Best days for ${esc(dog)}</h2>
-        <div class="big">${esc(joinNames(names))}</div>
-        <div class="why">Top day: ${esc(best.label)} scores ${best.score}. ${esc(best.summary)} ${best.nice_hours} of ${best.total_hours} daylight hours look nice.${best.best_window ? ` Best stretch of the day ${esc(best.best_window.label)}.` : ''}</div></div>`;
-    } else {
-      const best = days.slice().sort((a, b) => b.score - a.score)[0];
-      banner = `<div class="picks"><h2>Best days for ${esc(dog)}</h2>
-        <div class="big">No day scores Good or better this stretch</div>
-        <div class="why">Least bad: ${esc(best.label)}, ${fmtDate(best.date)}, scores ${best.score}.${best.best_window ? ` Best stretch of the day ${esc(best.best_window.label)}.` : ''}</div></div>`;
-    }
+    hero(data);
+    const table = `<div class="sr"><table><caption>Daily backyard scores</caption><tr><th>Day</th><th>Score</th><th>Grade</th><th>Rain %</th><th>Feels like °F</th><th>Dew point °F</th><th>Nice hours</th></tr>${
+      days.map(d => `<tr><td>${esc(d.label)} ${d.date}</td><td>${d.score}</td><td>${d.grade}</td><td>${d.rain.max_pop}</td><td>${d.temp.feels_high}</td><td>${d.dew.mean ?? ''}</td><td>${d.nice_hours} of ${d.total_hours}</td></tr>`).join('')}</table></div>`;
+    $('app').innerHTML = strip(days) + table + '<section class="detail" id="detail" role="tabpanel" aria-live="polite"></section>';
 
-    const table = `<table class="sr"><caption>Daily backyard scores</caption><tr><th>Day</th><th>Score</th><th>Grade</th><th>Rain %</th><th>Feels like °F</th><th>Dew point °F</th><th>Nice hours</th></tr>${
-      days.map(d => `<tr><td>${esc(d.label)} ${d.date}</td><td>${d.score}</td><td>${d.grade}</td><td>${d.rain.max_pop}</td><td>${d.temp.feels_high}</td><td>${d.dew.mean ?? ''}</td><td>${d.nice_hours} of ${d.total_hours}</td></tr>`).join('')}</table>`;
-
-    document.getElementById('app').innerHTML = banner +
-      `<div class="panel"><div class="panel-head"><h2 id="chartTitle">Backyard score by day</h2><span class="hint">0 to 100, higher is better. Hover for details, click to jump to the day.</span></div>
-       <div class="chart" id="chart"></div>${table}</div>
-       <div class="grid">${days.map(card).join('')}</div>`;
-    const chartEl = document.getElementById('chart');
-    let lastW = 0;
-    function drawChart() {
-      const cw = chartEl.clientWidth;
-      if (Math.abs(cw - lastW) < 2) return;
-      lastW = cw;
-      chartEl.innerHTML = scoreChart(days, cw);
-      wireTooltip(chartEl, days);
+    const tabs = Array.from(document.querySelectorAll('.day'));
+    function select(i, focus) {
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', j === i ? 'true' : 'false'); t.tabIndex = j === i ? 0 : -1; });
+      $('detail').setAttribute('aria-labelledby', 'tab-' + i);
+      $('detail').innerHTML = detail(days[i]);
+      if (focus) tabs[i].focus();
+      tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
-    drawChart();
-    window.addEventListener('resize', drawChart);
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); select(Math.min(tabs.length - 1, i + 1), true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); select(Math.max(0, i - 1), true); }
+      });
+    });
+    select(0);
   }
 
   fetch('data.json?v=' + Date.now(), { cache: 'no-store' })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(render)
     .catch(() => {
-      document.getElementById('updated').textContent = '';
-      document.getElementById('app').innerHTML =
-        '<div class="err">The forecast file has not been built yet, or could not load. If this is a new setup, run the "Refresh forecast" workflow once from the Actions tab.</div>';
+      $('updated').textContent = '';
+      $('headline').textContent = 'No forecast yet';
+      $('lede').textContent = '';
+      $('app').innerHTML = '<div class="err">The forecast file has not been built yet. Open the Actions tab on GitHub and run "Refresh forecast" once.</div>';
     });
 })();
 </script>
