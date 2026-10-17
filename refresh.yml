@@ -1,0 +1,58 @@
+name: Refresh forecast
+
+on:
+  schedule:
+    # Every 3 hours (times are UTC). GitHub may start scheduled runs a few minutes late.
+    - cron: "17 */3 * * *"
+  workflow_dispatch: {}   # adds a "Run workflow" button for a manual refresh
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Month key for the normals cache
+        id: month
+        run: echo "key=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore humidity normals
+        uses: actions/cache@v4
+        with:
+          path: .cache/normals.json
+          key: normals-${{ steps.month.outputs.key }}
+          restore-keys: normals-
+
+      - name: Build forecast data
+        env:
+          LAT: ${{ secrets.LAT }}
+          LON: ${{ secrets.LON }}
+        run: python scripts/build_forecast.py
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish
+        id: deploy
+        uses: actions/deploy-pages@v4
