@@ -81,7 +81,7 @@ button { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
 .brand svg { width: 26px; height: 26px; color: var(--lawn); }
 .top-right { display: flex; align-items: center; gap: 12px; color: var(--ink-3); font-size: 14px; }
-.theme-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.theme-btn { white-space: nowrap; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
 
 /* ---------- hero ---------- */
 .hero { padding: 42px 0 30px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 32px; align-items: end; }
@@ -108,6 +108,11 @@ button { font: inherit; color: inherit; }
   overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 10px; margin: 0 -4px;
   scrollbar-width: thin;
 }
+.strip-wrap { position: relative; }
+.strip-wrap::after { content: ""; position: absolute; top: 4px; right: -4px; bottom: 10px; width: 46px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--page)); opacity: 0; transition: opacity .2s; }
+.strip-wrap.more::after { opacity: 1; }
+.swipe { display: none; color: var(--ink-3); font-size: 13px; }
 .day {
   scroll-snap-align: start; position: relative; border: 0; cursor: pointer; text-align: left;
   border-radius: var(--r-md); padding: 12px 11px 0; min-height: 214px; overflow: hidden;
@@ -166,7 +171,7 @@ button { font: inherit; color: inherit; }
 .pm-when { color: var(--ink-3); font-size: 14px; }
 .pm-lead { font-size: 17px; margin: 12px 0 14px; }
 .vs { display: grid; gap: 10px; }
-.vs-row { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); }
+.vs-row { display: grid; grid-template-columns: 7.2em 1fr; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); }
 .vs-track { position: relative; height: 26px; background: var(--panel-2); border-radius: 7px; }
 .vs-bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-weight: 700; font-size: 14px; color: #fff; min-width: 46px; }
 .vs-bar.now { background: var(--rain); }
@@ -177,7 +182,7 @@ button { font: inherit; color: inherit; }
 .mini { margin-top: 10px; }
 .mini-label { font-size: 13px; color: var(--ink-3); margin-top: 10px; }
 .mini svg { display: block; width: 100%; height: auto; }
-.mini text { fill: var(--ink-3); font-size: 10px; font-family: var(--body); }
+.mini text { fill: var(--ink-3); font-size: 12px; font-family: var(--body); }
 .mini .v { fill: var(--ink); font-weight: 700; }
 .mini .heat { fill: var(--sun); }
 .mini .wet { fill: var(--rain); }
@@ -199,13 +204,15 @@ footer a { color: var(--ink-2); }
   .detail { grid-template-columns: 1fr; padding: 20px; gap: 26px; }
   .explain { grid-template-columns: 1fr; gap: 18px; }
   .strip { grid-template-columns: repeat(10, 84px); }
+  .swipe { display: inline; }
 }
 @media (max-width: 480px) {
   .wrap { padding: 16px 16px 40px; }
   .top-right .upd { display: none; }
   .d-title { font-size: 28px; }
   .grade .num { font-size: 44px; }
-  .vs-row { grid-template-columns: 92px 1fr; }
+  .vs-row { font-size: 13px; }
+  .vs-row span { white-space: nowrap; }
 }
 </style>
 </head>
@@ -310,6 +317,7 @@ footer a { color: var(--ink-2); }
   const PAW = '<svg class="pick" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="40" r="13"/><circle cx="15" cy="24" r="7"/><circle cx="27" cy="14" r="7"/><circle cx="41" cy="14" r="7"/><circle cx="51" cy="26" r="7"/></svg>';
 
   const withDate = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label : `${dayName(d)}, ${fmtShort(d.date)}`;
+  const midSentence = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label.toLowerCase() : withDate(d);
   // ---------- hero
   function hero(data) {
     const days = data.days, dog = data.dog || 'Maximus';
@@ -318,11 +326,11 @@ footer a { color: var(--ink-2); }
     let head, lede;
     if (picks.length) {
       head = `${withDate(best)} looks like ${dog}'s best day.`;
-      const others = picks.slice(1).map(withDate);
+      const others = picks.slice(1).map(midSentence);
       lede = best.summary + (others.length ? ` ${others.join(' and ')} ${others.length > 1 ? 'also look' : 'also looks'} good.` : '');
     } else {
       head = `A warm stretch. Mornings are his best bet.`;
-      lede = `No day scores Good or better in the next ten. The least rough is ${withDate(best)}. ${best.summary}`;
+      lede = `No day scores Good or better in the next ten. The least rough is ${midSentence(best)}. ${best.summary}`;
     }
     $('headline').textContent = head;
     $('lede').textContent = lede;
@@ -352,7 +360,7 @@ footer a { color: var(--ink-2); }
         <span class="grass" aria-hidden="true"></span>
       </button>`;
     }).join('');
-    return `<div class="strip-head"><h2>The next ten days</h2>
+    return `<div class="strip-head"><h2>The next ten days</h2><span class="swipe">Swipe to see all ten. Tap a day for details.</span>
       <div class="legend" aria-hidden="true">
         <span><i style="background:linear-gradient(180deg,var(--sky-cool-a),var(--sky-cool-b))"></i>Cool and dry</span>
         <span><i style="background:linear-gradient(180deg,var(--sky-warm-a),var(--sky-warm-b))"></i>Warm</span>
@@ -360,12 +368,23 @@ footer a { color: var(--ink-2); }
         <span><i style="background:linear-gradient(180deg,var(--sky-rain-a),var(--sky-rain-b))"></i>Rain risk</span>
         <span><i style="background:var(--lawn)"></i>Taller grass, better day</span>
       </div></div>
-      <div class="strip" role="tablist" aria-label="Pick a day">${tiles}</div>`;
+      <div class="strip-wrap"><div class="strip" role="tablist" aria-label="Pick a day">${tiles}</div></div>`;
   }
 
+  // Draw charts at their real on-screen width so the text stays readable on phones.
+  function chartWidth() {
+    const el = document.getElementById('detail');
+    const full = el ? el.clientWidth : 600;
+    const cs = el ? getComputedStyle(el) : null;
+    const pad = cs ? parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) : 40;
+    const cols = window.matchMedia('(max-width: 860px)').matches ? 1 : 2;
+    const gap = cols === 2 ? 34 : 0;
+    return Math.max(260, Math.round((full - pad - gap) / cols));
+  }
   // ---------- hourly mini chart: one measure, one axis
   function mini(hours, key, cls, unit, lo, hi) {
-    const w = 520, h = 78, top = 14, bottom = 16, n = hours.length, bw = w / n, gap = 3;
+    const w = chartWidth(), h = 84, top = 16, bottom = 18, n = hours.length, bw = w / n, gap = 3;
+    const every = bw >= 34 ? 1 : bw >= 20 ? 2 : 3;
     const y = v => (h - bottom) - Math.max(2, (h - top - bottom) * (Math.max(lo, v) - lo) / (hi - lo));
     let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${unit === '%' ? 'Chance of rain by hour' : 'Feels like temperature by hour'}">`;
     s += `<line x1="0" x2="${w}" y1="${h - bottom}" y2="${h - bottom}" stroke="var(--line)"/>`;
@@ -374,7 +393,7 @@ footer a { color: var(--ink-2); }
       if (x[key] > hours[pi][key]) pi = i;
       const bx = i * bw + gap / 2, by = y(x[key]);
       s += `<rect class="${cls}" x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(bw - gap).toFixed(1)}" height="${(h - bottom - by).toFixed(1)}" rx="3"><title>${hourLabel(x.h)}: ${x[key]}${unit}</title></rect>`;
-      if (n <= 8 || i % 2 === 0) s += `<text x="${(bx + (bw - gap) / 2).toFixed(1)}" y="${h - 3}" text-anchor="middle">${hourLabel(x.h)}</text>`;
+      if (i % every === 0) s += `<text x="${(bx + (bw - gap) / 2).toFixed(1)}" y="${h - 3}" text-anchor="middle">${hourLabel(x.h)}</text>`;
     });
     const pv = hours[pi][key];
     s += `<text class="v" x="${(pi * bw + bw / 2).toFixed(1)}" y="${(y(pv) - 4).toFixed(1)}" text-anchor="middle">${pv}${unit}</text>`;
@@ -491,6 +510,21 @@ footer a { color: var(--ink-2); }
       });
     });
     select(0);
+
+    // Fade the right edge while more days are hidden off-screen.
+    const stripEl = document.querySelector('.strip'), wrapEl = document.querySelector('.strip-wrap');
+    const edge = () => wrapEl.classList.toggle('more', stripEl.scrollLeft + stripEl.clientWidth < stripEl.scrollWidth - 8);
+    stripEl.addEventListener('scroll', edge, { passive: true });
+    edge();
+    // Redraw the open day's charts if the screen width changes (for example, rotating a phone).
+    let lastW = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (Math.abs(window.innerWidth - lastW) < 20) return;
+      lastW = window.innerWidth;
+      const cur = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+      select(Math.max(0, cur));
+      edge();
+    });
   }
 
   fetch('data.json?v=' + Date.now(), { cache: 'no-store' })
