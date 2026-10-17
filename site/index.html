@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Maximus Backyard Forecast</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#eef3ee">
+<meta name="theme-color" content="#eef3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1712" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Ten-day forecast scored for a German Shepherd's backyard time. Cool and dry days score highest.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Maximus Backyard Forecast">
+<meta property="og:description" content="Which of the next ten days are best for backyard time, updated every 3 hours.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Backyard">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -29,11 +37,14 @@
   --watch: #c48a12;
   --hot: #c4472f;
 
-  --sky-cool-a: #7fb8de; --sky-cool-b: #dbeef7;
-  --sky-warm-a: #9cc0d8; --sky-warm-b: #f3e6c8;
-  --sky-hot-a:  #e5b46a; --sky-hot-b:  #f8e6c6;
-  --sky-show-a: #9fb3c8; --sky-show-b: #e1e8ef;
-  --sky-rain-a: #8c9cb2; --sky-rain-b: #d6dde6;
+  /* Condition colors. Checked for color-blind separation (all pairs) in both themes. */
+  --c-cool: #5aa6e6; --c-cool-fg: #14261c;
+  --c-warm: #c29a2c; --c-warm-fg: #14261c;
+  --c-hot:  #bd4b27; --c-hot-fg:  #ffffff;
+  --c-rain: #45488f; --c-rain-fg: #ffffff;
+  /* Grade and afternoon colors (always shown with a word and a meter) */
+  --g-great: #2e8b3e; --g-good: #3a7fc1; --g-fair: #b07d10; --g-rough: #c4472f;
+  --bar-now: #3c6ea6; --bar-ref: #a85a12;
 
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
@@ -45,11 +56,12 @@
     --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
     --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
     --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
-    --sky-cool-a: #24476a; --sky-cool-b: #1a2d3a;
-    --sky-warm-a: #34506a; --sky-warm-b: #3a3526;
-    --sky-hot-a:  #6b4a1f; --sky-hot-b:  #3b2d1a;
-    --sky-show-a: #3a4a5c; --sky-show-b: #222c36;
-    --sky-rain-a: #344257; --sky-rain-b: #1d2530;
+    --c-cool: #4f93d8; --c-cool-fg: #14261c;
+    --c-warm: #a98f22; --c-warm-fg: #14261c;
+    --c-hot:  #c6452c; --c-hot-fg:  #ffffff;
+    --c-rain: #5f5bb0; --c-rain-fg: #ffffff;
+    --g-great: #4fb055; --g-good: #5a9be0; --g-fair: #d9a530; --g-rough: #e5604a;
+    --bar-now: #3c6ea6; --bar-ref: #a85a12;
   }
 }
 :root[data-theme="dark"] {
@@ -57,11 +69,12 @@
   --ink: #e9f0ea; --ink-2: #b9c7bd; --ink-3: #8ea195;
   --lawn: #6fa25c; --lawn-hi: #9fd07e; --tan: #d39d66;
   --sun: #e9a34b; --rain: #79a3d6; --easy: #5fb85a; --watch: #e2ac36; --hot: #e5684f;
-  --sky-cool-a: #24476a; --sky-cool-b: #1a2d3a;
-  --sky-warm-a: #34506a; --sky-warm-b: #3a3526;
-  --sky-hot-a:  #6b4a1f; --sky-hot-b:  #3b2d1a;
-  --sky-show-a: #3a4a5c; --sky-show-b: #222c36;
-  --sky-rain-a: #344257; --sky-rain-b: #1d2530;
+  --c-cool: #4f93d8; --c-cool-fg: #14261c;
+  --c-warm: #a98f22; --c-warm-fg: #14261c;
+  --c-hot:  #c6452c; --c-hot-fg:  #ffffff;
+  --c-rain: #5f5bb0; --c-rain-fg: #ffffff;
+  --g-great: #4fb055; --g-good: #5a9be0; --g-fair: #d9a530; --g-rough: #e5604a;
+  --bar-now: #3c6ea6; --bar-ref: #a85a12;
 }
 
 /* ---------- base ---------- */
@@ -114,31 +127,41 @@ button { font: inherit; color: inherit; }
 .strip-wrap.more::after { opacity: 1; }
 .swipe { display: none; color: var(--ink-3); font-size: 13px; }
 .day {
-  scroll-snap-align: start; position: relative; border: 0; cursor: pointer; text-align: left;
-  border-radius: var(--r-md); padding: 12px 11px 0; min-height: 214px; overflow: hidden;
-  display: flex; flex-direction: column; background: linear-gradient(180deg, var(--a) 0%, var(--b) 72%);
-  box-shadow: inset 0 0 0 1px rgba(29,51,40,.08);
+  scroll-snap-align: start; position: relative; border: 0; padding: 0; cursor: pointer; text-align: left;
+  border-radius: var(--r-md); min-height: 226px; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: color-mix(in oklab, var(--a) 12%, var(--panel));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--a) 30%, transparent);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 .day:hover { transform: translateY(-2px); }
-.day[aria-selected="true"] { box-shadow: inset 0 0 0 2px var(--ink), 0 8px 22px -12px rgba(29,51,40,.55); transform: translateY(-3px); }
-.sky-cool { --a: var(--sky-cool-a); --b: var(--sky-cool-b); }
-.sky-warm { --a: var(--sky-warm-a); --b: var(--sky-warm-b); }
-.sky-hot  { --a: var(--sky-hot-a);  --b: var(--sky-hot-b); }
-.sky-show { --a: var(--sky-show-a); --b: var(--sky-show-b); }
-.sky-rain { --a: var(--sky-rain-a); --b: var(--sky-rain-b); }
-.day .wd { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }
-.day .dt { font-size: 13px; color: var(--ink-2); }
-.day .icon { width: 34px; height: 34px; margin: 10px 0 4px; color: var(--ink); }
-.day .feels { font-size: 13px; color: var(--ink-2); }
+.day[aria-selected="true"] { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ink), 0 10px 24px -14px rgba(20,38,28,.6); transform: translateY(-3px); }
+.c-cool { --a: var(--c-cool); --fg: var(--c-cool-fg); }
+.c-warm { --a: var(--c-warm); --fg: var(--c-warm-fg); }
+.c-hot  { --a: var(--c-hot);  --fg: var(--c-hot-fg); }
+.c-rain { --a: var(--c-rain); --fg: var(--c-rain-fg); }
+.day .head {
+  display: block; position: relative; padding: 11px 11px 10px; color: var(--fg);
+  background: linear-gradient(160deg, color-mix(in oklab, var(--a) 86%, #fff) 0%, var(--a) 60%);
+}
+.day .wd { display: block; font-family: var(--display); font-weight: 700; font-size: 19px; line-height: 1.1; letter-spacing: -0.01em; }
+.day .dt { display: block; font-size: 13px; font-weight: 600; opacity: .92; }
+.day .cond { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 700; }
+.day .icon { width: 24px; height: 24px; color: currentColor; flex: none; }
+.day .body { display: flex; flex-direction: column; flex: 1; padding: 9px 11px 0; color: var(--ink); }
+.day .feels { display: block; font-size: 13px; color: var(--ink-2); }
 .day .feels b { font-size: 15px; color: var(--ink); }
-.day .score { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.04em; margin-top: auto; padding-bottom: 6px; position: relative; z-index: 1; }
-.day .grass { margin: 0 -11px; height: var(--h); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
+.day .score { display: block; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.04em; margin-top: auto; padding: 8px 0 6px; position: relative; z-index: 1; }
+.day .grass { display: block; margin: 0 -11px; height: var(--h); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
 .day .grass::before { /* blades along the top edge */
   content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 7px;
   background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
 }
-.day .pick { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; color: var(--tan); }
+.day .pick { position: absolute; top: 9px; right: 9px; width: 24px; height: 24px; color: var(--fg); opacity: .95; }
+/* grade meter: filled steps carry the order, color only backs it up */
+.meter { display: inline-flex; gap: 3px; margin-right: 2px; }
+.pill .meter i, .meter i { width: 6px; height: 12px; border-radius: 2px; background: var(--line); }
+.pill .meter i.on, .meter i.on { background: var(--gc); }
 @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .day .grass { animation: none; } .day, .day:hover { transition: none; transform: none; } }
 
@@ -174,8 +197,8 @@ button { font: inherit; color: inherit; }
 .vs-row { display: grid; grid-template-columns: 7.2em 1fr; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); }
 .vs-track { position: relative; height: 26px; background: var(--panel-2); border-radius: 7px; }
 .vs-bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-weight: 700; font-size: 14px; color: #fff; min-width: 46px; }
-.vs-bar.now { background: var(--rain); }
-.vs-bar.ref { background: var(--sun); }
+.vs-bar.now { background: var(--bar-now); }
+.vs-bar.ref { background: var(--bar-ref); }
 .pm-lines { margin-top: 14px; color: var(--ink-2); font-size: 15px; display: grid; gap: 4px; }
 .pm-lines b { color: var(--ink); }
 .hours { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
@@ -285,8 +308,11 @@ footer a { color: var(--ink-2); }
   btn.addEventListener('click', () => { mode = modes[(modes.indexOf(mode) + 1) % 3]; try { localStorage.setItem('theme', mode); } catch (e) {} applyTheme(); });
   applyTheme();
 
-  const GRADE = { Great: '--easy', Good: '--lawn', Fair: '--watch', Rough: '--hot' };
-  const PM = { easy: '--easy', watch: '--watch', hot: '--hot' };
+  const GRADE = { Great: '--g-great', Good: '--g-good', Fair: '--g-fair', Rough: '--g-rough' };
+  const STEPS = { Great: 4, Good: 3, Fair: 2, Rough: 1 };
+  const PM = { easy: '--g-great', watch: '--g-fair', hot: '--g-rough' };
+  const PM_STEPS = { easy: 3, watch: 2, hot: 1 };
+  const meter = (n, of, cssVar) => `<span class="meter" aria-hidden="true" style="--gc:var(${cssVar})">${Array.from({ length: of }, (_, k) => `<i class="${k < n ? 'on' : ''}"></i>`).join('')}</span>`;
   let MONTH = 'July';
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -300,11 +326,12 @@ footer a { color: var(--ink-2); }
   // ---------- sky look for a day, from its own numbers
   function skyOf(d) {
     const pop = d.rain.max_pop, fl = d.temp.feels_high;
-    if (pop >= 50) return { cls: 'sky-rain', icon: /thunder|storm/i.test(d.sky) ? 'storm' : 'rain', label: 'Rain likely' };
-    if (pop >= 30) return { cls: 'sky-show', icon: 'shower', label: 'Some rain risk' };
-    if (fl >= 88) return { cls: 'sky-hot', icon: 'sun', label: 'Hot' };
-    if (fl >= 80) return { cls: 'sky-warm', icon: /cloud|overcast/i.test(d.sky) ? 'cloud' : 'sun', label: 'Warm' };
-    return { cls: 'sky-cool', icon: /cloud|overcast/i.test(d.sky) ? 'cloud' : 'sun', label: 'Cool and dry' };
+    const cloudy = /cloud|overcast/i.test(d.sky);
+    if (pop >= 50) return { cls: 'c-rain', icon: /thunder|storm/i.test(d.sky) ? 'storm' : 'rain', label: /thunder|storm/i.test(d.sky) ? 'Storms' : 'Rain' };
+    if (pop >= 30) return { cls: 'c-rain', icon: 'shower', label: 'Showers' };
+    if (fl >= 88) return { cls: 'c-hot', icon: 'sun', label: 'Hot' };
+    if (fl >= 80) return { cls: 'c-warm', icon: cloudy ? 'cloud' : 'sun', label: 'Warm' };
+    return { cls: 'c-cool', icon: cloudy ? 'cloud' : 'sun', label: 'Cool' };
   }
   const ICONS = {
     sun: '<circle cx="16" cy="16" r="6.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 2.5v3.5M16 26v3.5M2.5 16H6M26 16h3.5M6.4 6.4l2.5 2.5M23.1 23.1l2.5 2.5M6.4 25.6l2.5-2.5M23.1 8.9l2.5-2.5"/></g>',
@@ -350,22 +377,26 @@ footer a { color: var(--ink-2); }
       const h = Math.round(8 + d.score * 0.62);   // grass height in px, 8 to 70
       return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--h:${h}px;--i:${i}"
           aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d.top_pick ? ' Best pick.' : ''}">
-        ${d.top_pick ? PAW : ''}
-        <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
-        <span class="dt">${fmtShort(d.date)}</span>
-        ${icon(s.icon)}
-        <span class="feels"><b>${d.temp.feels_high}°</b> feels</span>
-        <span class="feels">${d.rain.max_pop}% rain</span>
-        <span class="score">${d.score}</span>
-        <span class="grass" aria-hidden="true"></span>
+        <span class="head">
+          ${d.top_pick ? PAW : ''}
+          <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
+          <span class="dt">${fmtShort(d.date)}</span>
+          <span class="cond">${icon(s.icon)}${esc(s.label)}</span>
+        </span>
+        <span class="body">
+          <span class="feels"><b>${d.temp.feels_high}°</b> feels</span>
+          <span class="feels">${d.rain.max_pop}% rain</span>
+          <span class="score">${d.score}</span>
+          <span class="grass" aria-hidden="true"></span>
+        </span>
       </button>`;
     }).join('');
     return `<div class="strip-head"><h2>The next ten days</h2><span class="swipe">Swipe to see all ten. Tap a day for details.</span>
       <div class="legend" aria-hidden="true">
-        <span><i style="background:linear-gradient(180deg,var(--sky-cool-a),var(--sky-cool-b))"></i>Cool and dry</span>
-        <span><i style="background:linear-gradient(180deg,var(--sky-warm-a),var(--sky-warm-b))"></i>Warm</span>
-        <span><i style="background:linear-gradient(180deg,var(--sky-hot-a),var(--sky-hot-b))"></i>Hot</span>
-        <span><i style="background:linear-gradient(180deg,var(--sky-rain-a),var(--sky-rain-b))"></i>Rain risk</span>
+        <span><i style="background:var(--c-cool)"></i>Cool: feels under 80°F</span>
+        <span><i style="background:var(--c-warm)"></i>Warm: 80 to 87°F</span>
+        <span><i style="background:var(--c-hot)"></i>Hot: 88°F and up</span>
+        <span><i style="background:var(--c-rain)"></i>Rain: 30% chance or more</span>
         <span><i style="background:var(--lawn)"></i>Taller grass, better day</span>
       </div></div>
       <div class="strip-wrap"><div class="strip" role="tablist" aria-label="Pick a day">${tiles}</div></div>`;
@@ -433,7 +464,7 @@ footer a { color: var(--ink-2); }
       body = `<p class="pm-lead">At its hottest it will feel like <b>${a.peak_feels}°F</b>.</p>`;
     }
     return `<div class="pm"><div class="pm-top"><h3>Afternoon check</h3>
-      <span class="pill"><i style="background:var(${PM[a.level]})"></i>${esc(a.flag)}</span></div>
+      <span class="pill">${meter(PM_STEPS[a.level], 3, PM[a.level])}${esc(a.flag)}</span></div>
       <div class="pm-when">${esc(a.start)} until he comes in</div>${body}</div>`;
   }
   function detail(d) {
@@ -444,7 +475,7 @@ footer a { color: var(--ink-2); }
           <div><h2 class="d-title">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? d.label : fmtLong(d.date).split(',')[0])}</h2>
             <div class="d-sub">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? fmtLong(d.date) : dateOf(d.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }))}${d.partial ? ', rest of the day' : ''}. ${esc(d.sky)}</div></div>
           <div class="grade"><span class="num">${d.score}</span><span class="of">out of 100</span>
-            <span class="pill"><i style="background:var(${GRADE[d.grade]})"></i>${esc(d.grade)}</span></div>
+            <span class="pill">${meter(STEPS[d.grade], 4, GRADE[d.grade])}${esc(d.grade)}</span></div>
         </div>
         <p class="d-summary">${esc(d.summary)}</p>
         <div class="stats">
@@ -486,7 +517,10 @@ footer a { color: var(--ink-2); }
     }
     if (data.afternoon_rule) { const [e, w] = data.afternoon_rule; $('pmRule').textContent = `${e}°F or cooler is an easy afternoon. ${e + 1} to ${w}°F means keep an eye on him. Above ${w}°F means short visits only.`; }
     if (data.normals_years) $('normYears').textContent = `, ${data.normals_years}`;
-    $('notes').innerHTML = (data.notes || []).map(esc).join('<br>');
+    const notes = (data.notes || []).slice();
+    const ageH = (Date.now() - gen.getTime()) / 36e5;
+    if (ageH > 6) notes.unshift(`This forecast is ${Math.round(ageH)} hours old. It normally refreshes every 3 hours, so the automatic update may have paused. Check the Actions tab on GitHub.`);
+    $('notes').innerHTML = notes.map(esc).join('<br>');
 
     const days = data.days;
     hero(data);
