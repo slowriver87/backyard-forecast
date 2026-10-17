@@ -77,6 +77,18 @@
   --bar-now: #3c6ea6; --bar-ref: #a85a12;
 }
 
+/* Black background option for dark mode: add ?bg=black to the link */
+@media (prefers-color-scheme: dark) {
+  :root.black:not([data-theme="light"]) {
+    --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
+    --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
+  }
+}
+:root.black[data-theme="dark"] {
+    --page: #000000; --panel: #121213; --panel-2: #1c1c1e; --line: #2a2a2d;
+    --ink: #f2f2f2; --ink-2: #c5c5c8; --ink-3: #8e8e93;
+}
+
 /* ---------- base ---------- */
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -300,7 +312,9 @@ footer a { color: var(--ink-2); }
 (function () {
   "use strict";
   // ---------- theme (per-viewer convenience only)
-  const root = document.documentElement, btn = document.getElementById('themeBtn');
+  const root = document.documentElement;
+  try { if (new URLSearchParams(location.search).get('bg') === 'black') root.classList.add('black'); } catch (e) {}
+  const btn = document.getElementById('themeBtn');
   const modes = ['auto', 'light', 'dark'], names = { auto: 'Auto theme', light: 'Light theme', dark: 'Dark theme' };
   let mode = 'auto';
   try { mode = localStorage.getItem('theme') || 'auto'; } catch (e) {}
