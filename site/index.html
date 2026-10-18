@@ -112,6 +112,10 @@ button { font: inherit; color: inherit; }
   transition: border-color .15s ease;
 }
 .rank:hover { border-color: var(--ink-3); }
+.rank { position: relative; padding-right: 64px; }
+.podium li:first-child .rank { padding-right: 63px; }
+.rank .pick { position: absolute; top: 10px; right: 14px; width: 38px; height: 46px; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+.rank .medal-num { font-size: 9.5px; }
 .podium li:first-child .rank { border: 2px solid var(--ink); padding: 17px 17px 15px; }
 .r-num { grid-row: span 4; font-family: var(--display); font-weight: 800; font-size: 52px; line-height: .85; letter-spacing: -0.05em; color: var(--tan); }
 .r-day { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.015em; line-height: 1.15; }
@@ -423,7 +427,8 @@ footer a { color: var(--ink-2); }
     $('podium').innerHTML = top.map(d => {
       const n = STEPS[d.grade];
       const meta = [d.best_window ? `Best stretch ${d.best_window.label}.` : '', d.afternoon ? `${d.afternoon.flag}.` : ''].filter(Boolean).join(' ');
-      return `<li><button class="rank" type="button" data-date="${d.date}" aria-label="Number ${d._rank}: ${esc(withDate(d))}. Score ${d.score}, ${d.grade}. ${n} out of 4 soccer balls. ${esc(meta)}">
+      return `<li><button class="rank" type="button" data-date="${d.date}" aria-label="Number ${d._rank}, ${['gold', 'silver', 'bronze'][d._rank - 1]} medal: ${esc(withDate(d))}. Score ${d.score}, ${d.grade}. ${n} out of 4 soccer balls. ${esc(meta)}">
+        ${medal(d._rank)}
         <span class="r-num" aria-hidden="true">${d._rank}</span>
         <span class="r-day">${esc(withDate(d))}</span>
         <span class="r-score">${d.score}, ${esc(d.grade)}</span>
