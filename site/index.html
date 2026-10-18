@@ -183,8 +183,8 @@ button { font: inherit; color: inherit; }
   content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 7px;
   background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
 }
-.day .pick { position: absolute; top: 9px; right: 9px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--panel); color: var(--ink); font: 800 14px/1 var(--display); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.day .pick { position: absolute; top: 5px; right: 6px; width: 28px; height: 34px; filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.35)); }
+.medal-num { font: 800 9.5px/1 var(--display); }
 /* rating: soccer balls, filled count carries the order */
 .meter { display: inline-flex; gap: 3px; margin-right: 2px; }
 .balls { display: inline-flex; gap: 3px; margin-right: 3px; vertical-align: -3px; }
@@ -267,7 +267,7 @@ footer a { color: var(--ink-2); }
   .day .dt { font-size: 12px; }
   .day .cond { flex-direction: column; align-items: flex-start; gap: 2px; margin-top: 5px; font-size: 12px; }
   .day .icon { width: 20px; height: 20px; }
-  .day .pick { width: 19px; height: 19px; top: 7px; right: 6px; font-size: 12px; }
+  .day .pick { width: 24px; height: 29px; top: 3px; right: 3px; }
   .day .body { padding: 6px 7px 0; }
   .day .feels { font-size: 12px; }
   .day .feels b { font-size: 14px; }
@@ -336,7 +336,7 @@ footer a { color: var(--ink-2); }
         <li><b>Heat, 35%</b>: the hottest feels-like temperature. <span id="tempRange">65°F or cooler scores 100. 95°F or hotter scores 0.</span></li>
         <li><b>Humidity, 25%</b>: dew point compared with normal for the date. <span id="dewRange">Normal scores 50. 8°F drier scores 100. 8°F muggier scores 0.</span></li>
       </ul>
-      <p>Soccer balls show the grade. Great (4 balls) is 75 and up. Good (3) is 60 to 74. Fair (2) is 45 to 59. Rough (1) is below 45. The afternoon check uses 3 balls: easy, keep an eye on him, short visits only. The three highest scores are ranked at the top of the page and numbered 1 to 3 on their tiles.</p>
+      <p>Soccer balls show the grade. Great (4 balls) is 75 and up. Good (3) is 60 to 74. Fair (2) is 45 to 59. Rough (1) is below 45. The afternoon check uses 3 balls: easy, keep an eye on him, short visits only. The three highest scores are ranked at the top of the page and get gold, silver and bronze medals on their tiles.</p>
     </section>
     <section>
       <h2>What the numbers mean</h2>
@@ -433,6 +433,23 @@ footer a { color: var(--ink-2); }
     }).join('');
   }
 
+  // ---------- medals for the top 3 days (number inside so it doesn't rely on color)
+  const MEDALS = {
+    1: { a: '#f6d04d', b: '#c9971a', ink: '#5a4106', rib: '#2f6fd0' },
+    2: { a: '#eef1f5', b: '#9aa3ae', ink: '#3b4149', rib: '#2f6fd0' },
+    3: { a: '#e6a066', b: '#a0612a', ink: '#4a2a10', rib: '#2f6fd0' },
+  };
+  function medal(r) {
+    const m = MEDALS[r];
+    return `<svg class="pick" viewBox="0 0 28 34" aria-hidden="true">
+      <defs><linearGradient id="mg${r}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${m.a}"/><stop offset="1" stop-color="${m.b}"/></linearGradient></defs>
+      <path d="M7 0h6l3 12h-6z" fill="${m.rib}"/><path d="M21 0h-6l-3 12h6z" fill="#d23b3b"/>
+      <circle cx="14" cy="22" r="10.5" fill="url(#mg${r})" stroke="${m.b}" stroke-width="1"/>
+      <circle cx="14" cy="22" r="7.6" fill="none" stroke="${m.ink}" stroke-opacity=".35" stroke-width=".9"/>
+      <text class="medal-num" x="14" y="25.4" text-anchor="middle" fill="${m.ink}">${r}</text>
+    </svg>`;
+  }
+
   // ---------- concession stand (food for backyard wildlife on freezing nights)
   const STAND_ICON = '<svg class="stand-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l2.5-5h19L28 9z" fill="currentColor"/><path d="M4 9h6v1.5a3 3 0 0 1-6 0zM16 9h6v1.5a3 3 0 0 1-6 0z" fill="currentColor"/><path d="M10 9h6v1.5a3 3 0 0 1-6 0zM22 9h6v1.5a3 3 0 0 1-6 0z" fill="currentColor" opacity=".45"/><path d="M6 13v14M26 13v14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="4" y="19" width="24" height="3.2" rx="1.2" fill="currentColor"/><circle cx="11" cy="17" r="1.6" fill="currentColor"/><circle cx="16" cy="16.6" r="2" fill="currentColor"/><circle cx="21" cy="17" r="1.6" fill="currentColor"/></svg>';
   function addDays(iso, n) { const d = dateOf(iso); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
@@ -481,7 +498,7 @@ footer a { color: var(--ink-2); }
       return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--s:${d.score};--i:${i}"
           aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d._rank ? ` Ranked number ${d._rank}.` : ''}">
         <span class="head">
-          ${d._rank ? `<span class="pick" aria-hidden="true">${d._rank}</span>` : ''}
+          ${d._rank ? medal(d._rank) : ''}
           <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
           <span class="dt">${fmtShort(d.date)}</span>
           <span class="cond">${icon(s.icon)}${esc(s.label)}</span>
