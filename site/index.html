@@ -45,6 +45,7 @@
   /* Grade and afternoon colors (always shown with a word and a meter) */
   --g-great: #2e8b3e; --g-good: #3a7fc1; --g-fair: #b07d10; --g-rough: #c4472f;
   --bar-now: #3c6ea6; --bar-ref: #a85a12;
+  --ball-fill: #ffffff; --ball-ink: #1a1a1a; --ball-ring: #1a1a1a;
 
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
@@ -61,7 +62,7 @@
     --c-hot:  #c6452c; --c-hot-fg:  #ffffff;
     --c-rain: #5f5bb0; --c-rain-fg: #ffffff;
     --g-great: #4fb055; --g-good: #5a9be0; --g-fair: #d9a530; --g-rough: #e5604a;
-    --bar-now: #3c6ea6; --bar-ref: #a85a12;
+    --bar-now: #3c6ea6; --bar-ref: #a85a12; --ball-ring: #e6e6e6;
   }
 }
 :root[data-theme="dark"] {
@@ -74,7 +75,7 @@
   --c-hot:  #c6452c; --c-hot-fg:  #ffffff;
   --c-rain: #5f5bb0; --c-rain-fg: #ffffff;
   --g-great: #4fb055; --g-good: #5a9be0; --g-fair: #d9a530; --g-rough: #e5604a;
-  --bar-now: #3c6ea6; --bar-ref: #a85a12;
+  --bar-now: #3c6ea6; --bar-ref: #a85a12; --ball-ring: #e6e6e6;
 }
 
 /* ---------- base ---------- */
@@ -158,10 +159,12 @@ button { font: inherit; color: inherit; }
   background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
 }
 .day .pick { position: absolute; top: 9px; right: 9px; width: 24px; height: 24px; color: var(--fg); opacity: .95; }
-/* grade meter: filled steps carry the order, color only backs it up */
+/* rating: soccer balls, filled count carries the order */
 .meter { display: inline-flex; gap: 3px; margin-right: 2px; }
-.pill .meter i, .meter i { width: 6px; height: 12px; border-radius: 2px; background: var(--line); }
-.pill .meter i.on, .meter i.on { background: var(--gc); }
+.balls { display: inline-flex; gap: 3px; margin-right: 3px; vertical-align: -3px; }
+.balls svg { width: 17px; height: 17px; }
+.balls svg.off { opacity: .22; }
+.fact .balls svg { width: 19px; height: 19px; }
 @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .day .grass { animation: none; } .day, .day:hover { transition: none; transform: none; } }
 
@@ -240,6 +243,14 @@ footer a { color: var(--ink-2); }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ball" viewBox="-10 -10 20 20">
+    <clipPath id="ballClip"><circle r="9.3"/></clipPath>
+    <circle r="9.3" style="fill:var(--ball-fill)"/>
+    <g clip-path="url(#ballClip)" style="fill:var(--ball-ink);stroke:var(--ball-ink)" stroke-width="0.55" stroke-linejoin="round" stroke-linecap="round"><polygon points="0.00,-3.70 3.52,-1.14 2.17,2.99 -2.17,2.99 -3.52,-1.14"/><polygon points="0.00,-6.90 -3.23,-9.25 -2.00,-13.05 2.00,-13.05 3.23,-9.25"/><polygon points="6.56,-2.13 7.80,-5.93 11.79,-5.93 13.03,-2.13 9.80,0.22"/><polygon points="4.06,5.58 8.05,5.58 9.29,9.38 6.05,11.73 2.82,9.38"/><polygon points="-4.06,5.58 -2.82,9.38 -6.05,11.73 -9.29,9.38 -8.05,5.58"/><polygon points="-6.56,-2.13 -9.80,0.22 -13.03,-2.13 -11.79,-5.93 -7.80,-5.93"/><line x1="0.00" y1="-3.70" x2="0.00" y2="-6.90"/><line x1="3.52" y1="-1.14" x2="6.56" y2="-2.13"/><line x1="2.17" y1="2.99" x2="4.06" y2="5.58"/><line x1="-2.17" y1="2.99" x2="-4.06" y2="5.58"/><line x1="-3.52" y1="-1.14" x2="-6.56" y2="-2.13"/></g>
+    <circle r="9.3" style="fill:none;stroke:var(--ball-ring)" stroke-width="1.1"/>
+  </symbol>
+</svg>
 <div class="wrap">
   <div class="top">
     <div class="brand">
@@ -273,7 +284,7 @@ footer a { color: var(--ink-2); }
         <li><b>Heat, 35%</b>: the hottest feels-like temperature. <span id="tempRange">65°F or cooler scores 100. 95°F or hotter scores 0.</span></li>
         <li><b>Humidity, 25%</b>: dew point compared with normal for the date. <span id="dewRange">Normal scores 50. 8°F drier scores 100. 8°F muggier scores 0.</span></li>
       </ul>
-      <p>Great is 75 and up. Good is 60 to 74. Fair is 45 to 59. Rough is below 45. Up to three days scoring 60 or more get a paw mark as best picks.</p>
+      <p>Soccer balls show the grade. Great (4 balls) is 75 and up. Good (3) is 60 to 74. Fair (2) is 45 to 59. Rough (1) is below 45. The afternoon check uses 3 balls: easy, keep an eye on him, short visits only. Up to three days scoring 60 or more get a paw mark as best picks.</p>
     </section>
     <section>
       <h2>What the numbers mean</h2>
@@ -313,7 +324,7 @@ footer a { color: var(--ink-2); }
   const STEPS = { Great: 4, Good: 3, Fair: 2, Rough: 1 };
   const PM = { easy: '--g-great', watch: '--g-fair', hot: '--g-rough' };
   const PM_STEPS = { easy: 3, watch: 2, hot: 1 };
-  const meter = (n, of, cssVar) => `<span class="meter" aria-hidden="true" style="--gc:var(${cssVar})">${Array.from({ length: of }, (_, k) => `<i class="${k < n ? 'on' : ''}"></i>`).join('')}</span>`;
+  const meter = (n, of) => `<span class="balls" role="img" aria-label="${n} of ${of} soccer balls">${Array.from({ length: of }, (_, k) => `<svg class="${k < n ? 'on' : 'off'}" viewBox="0 0 20 20" aria-hidden="true"><use href="#ball"/></svg>`).join('')}</span>`;
   let MONTH = 'July';
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -363,12 +374,12 @@ footer a { color: var(--ink-2); }
     $('headline').textContent = head;
     $('lede').textContent = lede;
     const facts = [
-      ['Score', `${best.score}, ${best.grade}`],
+      ['Score', `${best.score}, ${best.grade}`, meter(STEPS[best.grade], 4)],
       ['Nice hours outside', `${best.nice_hours} of ${best.total_hours}`],
       best.best_window ? ['Best stretch', best.best_window.label] : null,
       best.afternoon ? ['Afternoon', best.afternoon.flag] : null,
     ].filter(Boolean);
-    $('heroFacts').innerHTML = facts.map(([k, v]) => `<div class="fact"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    $('heroFacts').innerHTML = facts.map(([k, v, extra]) => `<div class="fact"><span>${esc(k)}</span><b>${extra || ''}${esc(v)}</b></div>`).join('');
   }
 
   // ---------- strip
@@ -465,7 +476,7 @@ footer a { color: var(--ink-2); }
       body = `<p class="pm-lead">At its hottest it will feel like <b>${a.peak_feels}°F</b>.</p>`;
     }
     return `<div class="pm"><div class="pm-top"><h3>Afternoon check</h3>
-      <span class="pill">${meter(PM_STEPS[a.level], 3, PM[a.level])}${esc(a.flag)}</span></div>
+      <span class="pill">${meter(PM_STEPS[a.level], 3)}${esc(a.flag)}</span></div>
       <div class="pm-when">${esc(a.start)} until he comes in</div>${body}</div>`;
   }
   function detail(d) {
@@ -476,7 +487,7 @@ footer a { color: var(--ink-2); }
           <div><h2 class="d-title">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? d.label : fmtLong(d.date).split(',')[0])}</h2>
             <div class="d-sub">${esc(d.label === 'Today' || d.label === 'Tomorrow' ? fmtLong(d.date) : dateOf(d.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }))}${d.partial ? ', rest of the day' : ''}. ${esc(d.sky)}</div></div>
           <div class="grade"><span class="num">${d.score}</span><span class="of">out of 100</span>
-            <span class="pill">${meter(STEPS[d.grade], 4, GRADE[d.grade])}${esc(d.grade)}</span></div>
+            <span class="pill">${meter(STEPS[d.grade], 4)}${esc(d.grade)}</span></div>
         </div>
         <p class="d-summary">${esc(d.summary)}</p>
         <div class="stats">
