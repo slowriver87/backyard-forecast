@@ -98,17 +98,29 @@ button { font: inherit; color: inherit; }
 .theme-btn { white-space: nowrap; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
 
 /* ---------- hero ---------- */
-.hero { padding: 42px 0 30px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 32px; align-items: end; }
+.hero { padding: 38px 0 30px; }
 .hero h1 {
-  font-family: var(--display); font-weight: 800; font-size: clamp(38px, 6.2vw, 72px);
-  line-height: 0.98; letter-spacing: -0.035em; margin: 0; max-width: 13ch;
+  font-family: var(--display); font-weight: 800; font-size: clamp(36px, 5.4vw, 64px);
+  line-height: 0.98; letter-spacing: -0.035em; margin: 0;
   font-variation-settings: "opsz" 96;
 }
-.hero p { margin: 16px 0 0; font-size: 18px; color: var(--ink-2); max-width: 46ch; }
-.hero-facts { display: grid; gap: 2px; background: var(--line); border-radius: var(--r-md); overflow: hidden; }
-.fact { background: var(--panel); padding: 14px 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
-.fact span { color: var(--ink-3); font-size: 14px; }
-.fact b { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; text-align: right; }
+.hero p { margin: 12px 0 0; font-size: 18px; color: var(--ink-2); max-width: 60ch; }
+.podium { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rank {
+  width: 100%; height: 100%; text-align: left; cursor: pointer; border: 1px solid var(--line); background: var(--panel);
+  border-radius: var(--r-lg); padding: 18px 18px 16px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-content: start;
+  transition: border-color .15s ease;
+}
+.rank:hover { border-color: var(--ink-3); }
+.podium li:first-child .rank { border: 2px solid var(--ink); padding: 17px 17px 15px; }
+.r-num { grid-row: span 4; font-family: var(--display); font-weight: 800; font-size: 52px; line-height: .85; letter-spacing: -0.05em; color: var(--tan); }
+.r-day { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.015em; line-height: 1.15; }
+.r-score { font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; line-height: 1.1; margin-top: 2px; }
+.r-balls { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; color: var(--ink-2); font-size: 14px; }
+.r-balls .balls { margin: 0; }
+.r-balls .balls svg { width: 20px; height: 20px; }
+.r-meta { color: var(--ink-3); font-size: 14px; margin-top: 4px; }
+@media (min-width: 861px) { .r-balls .balls { flex-basis: 100%; } }
 .notes { margin: 0 0 16px; padding: 12px 16px; border-radius: var(--r-md); background: var(--panel-2); color: var(--ink-2); font-size: 15px; border-left: 4px solid var(--watch); }
 .notes:empty { display: none; }
 
@@ -158,18 +170,13 @@ button { font: inherit; color: inherit; }
   content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 7px;
   background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
 }
-.day .pick { position: absolute; top: 9px; right: 9px; width: 24px; height: 24px; color: var(--fg); opacity: .95; }
+.day .pick { position: absolute; top: 9px; right: 9px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--panel); color: var(--ink); font: 800 14px/1 var(--display); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
 /* rating: soccer balls, filled count carries the order */
 .meter { display: inline-flex; gap: 3px; margin-right: 2px; }
 .balls { display: inline-flex; gap: 3px; margin-right: 3px; vertical-align: -3px; }
 .balls svg { width: 17px; height: 17px; }
 .balls svg.off { opacity: .22; }
-.fact-score { align-items: flex-start; }
-.score-lines { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
-.score-lines b { font-size: 26px; }
-.balls-line { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 4px 8px; color: var(--ink-2); font-size: 14px; }
-.balls-line .balls { margin: 0; vertical-align: 0; }
-.balls-line .balls svg { width: 20px; height: 20px; }
 @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .day .grass { animation: none; } .day, .day:hover { transition: none; transform: none; } }
 
@@ -231,7 +238,8 @@ footer a { color: var(--ink-2); }
 
 /* ---------- responsive ---------- */
 @media (max-width: 860px) {
-  .hero { grid-template-columns: 1fr; padding-top: 28px; gap: 22px; }
+  .hero { padding-top: 28px; }
+  .podium { grid-template-columns: 1fr; gap: 10px; }
   .detail { grid-template-columns: 1fr; padding: 20px; gap: 26px; }
   .explain { grid-template-columns: 1fr; gap: 18px; }
   .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; overflow: visible; margin: 0; padding: 4px 0 6px; }
@@ -243,7 +251,7 @@ footer a { color: var(--ink-2); }
   .day .dt { font-size: 12px; }
   .day .cond { flex-direction: column; align-items: flex-start; gap: 2px; margin-top: 5px; font-size: 12px; }
   .day .icon { width: 20px; height: 20px; }
-  .day .pick { width: 18px; height: 18px; top: 7px; right: 6px; }
+  .day .pick { width: 19px; height: 19px; top: 7px; right: 6px; font-size: 12px; }
   .day .body { padding: 6px 7px 0; }
   .day .feels { font-size: 12px; }
   .day .feels b { font-size: 14px; }
@@ -295,7 +303,7 @@ footer a { color: var(--ink-2); }
       <h1 id="headline">Checking the yard</h1>
       <p id="lede">Ten days of weather, scored for the hours he spends outside watching birds and rabbits.</p>
     </div>
-    <div class="hero-facts" id="heroFacts"></div>
+    <ol class="podium" id="podium" aria-label="Top three days, ranked"></ol>
   </section>
 
   <div class="notes" id="notes"></div>
@@ -311,7 +319,7 @@ footer a { color: var(--ink-2); }
         <li><b>Heat, 35%</b>: the hottest feels-like temperature. <span id="tempRange">65°F or cooler scores 100. 95°F or hotter scores 0.</span></li>
         <li><b>Humidity, 25%</b>: dew point compared with normal for the date. <span id="dewRange">Normal scores 50. 8°F drier scores 100. 8°F muggier scores 0.</span></li>
       </ul>
-      <p>Soccer balls show the grade. Great (4 balls) is 75 and up. Good (3) is 60 to 74. Fair (2) is 45 to 59. Rough (1) is below 45. The afternoon check uses 3 balls: easy, keep an eye on him, short visits only. Up to three days scoring 60 or more get a paw mark as best picks.</p>
+      <p>Soccer balls show the grade. Great (4 balls) is 75 and up. Good (3) is 60 to 74. Fair (2) is 45 to 59. Rough (1) is below 45. The afternoon check uses 3 balls: easy, keep an eye on him, short visits only. The three highest scores are ranked at the top of the page and numbered 1 to 3 on their tiles.</p>
     </section>
     <section>
       <h2>What the numbers mean</h2>
@@ -380,37 +388,31 @@ footer a { color: var(--ink-2); }
     storm: '<path d="M7 17h16a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14.2 2.4A4.3 4.3 0 0 0 7 17z" fill="currentColor"/><path d="M17 18.5l-4 6h4l-2.5 5.5 6-7.5h-4l2.5-4z" fill="currentColor"/>'
   };
   const icon = (k, cls) => `<svg class="${cls || 'icon'}" viewBox="0 0 32 32" aria-hidden="true">${ICONS[k]}</svg>`;
-  const PAW = '<svg class="pick" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="40" r="13"/><circle cx="15" cy="24" r="7"/><circle cx="27" cy="14" r="7"/><circle cx="41" cy="14" r="7"/><circle cx="51" cy="26" r="7"/></svg>';
 
   const withDate = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label : `${dayName(d)}, ${fmtShort(d.date)}`;
   const midSentence = d => (d.label === 'Today' || d.label === 'Tomorrow') ? d.label.toLowerCase() : withDate(d);
   // ---------- hero
   function hero(data) {
     const days = data.days, dog = data.dog || 'Maximus';
-    const picks = days.filter(d => d.top_pick).sort((a, b) => b.score - a.score);
-    const best = picks[0] || days.slice().sort((a, b) => b.score - a.score)[0];
-    let head, lede;
-    if (picks.length) {
-      head = `${withDate(best)} looks like ${dog}'s best day.`;
-      const others = picks.slice(1).map(midSentence);
-      lede = best.summary + (others.length ? ` ${others.join(' and ')} ${others.length > 1 ? 'also look' : 'also looks'} good.` : '');
-    } else {
-      head = `A warm stretch. Mornings are his best bet.`;
-      lede = `No day scores Good or better in the next ten. The least rough is ${midSentence(best)}. ${best.summary}`;
-    }
-    $('headline').textContent = head;
+    const top = days.slice().sort((x, y) => y.score - x.score || x.date.localeCompare(y.date)).slice(0, 3);
+    top.forEach((d, k) => { d._rank = k + 1; });
+    const good = top.filter(d => d.score >= 60).length;
+    $('headline').textContent = `${dog}'s top 3 soccer days`;
+    let lede = 'The three best days for backyard soccer in the next ten, ranked by score. Tap one for the details.';
+    if (good === 0) lede = 'None of the next ten days scores Good or better, so these are the least rough. Mornings are his best bet. Tap one for the details.';
+    else if (good < 3) lede = `Only ${good === 1 ? 'one day scores' : 'two days score'} Good or better in the next ten. Here are the three best, ranked by score. Tap one for the details.`;
     $('lede').textContent = lede;
-    const facts = [
-      ['Nice hours outside', `${best.nice_hours} of ${best.total_hours}`],
-      best.best_window ? ['Best stretch', best.best_window.label] : null,
-      best.afternoon ? ['Afternoon', best.afternoon.flag] : null,
-    ].filter(Boolean);
-    const n = STEPS[best.grade];
-    const scoreRow = `<div class="fact fact-score"><span>Score</span><div class="score-lines">
-        <b>${best.score}, ${esc(best.grade)}</b>
-        <div class="balls-line">${esc(dayName(best))} gets ${n} out of 4 soccer balls ${meter(n, 4)}</div>
-      </div></div>`;
-    $('heroFacts').innerHTML = scoreRow + facts.map(([k, v]) => `<div class="fact"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    $('podium').innerHTML = top.map(d => {
+      const n = STEPS[d.grade];
+      const meta = [d.best_window ? `Best stretch ${d.best_window.label}.` : '', d.afternoon ? `${d.afternoon.flag}.` : ''].filter(Boolean).join(' ');
+      return `<li><button class="rank" type="button" data-date="${d.date}" aria-label="Number ${d._rank}: ${esc(withDate(d))}. Score ${d.score}, ${d.grade}. ${n} out of 4 soccer balls. ${esc(meta)}">
+        <span class="r-num" aria-hidden="true">${d._rank}</span>
+        <span class="r-day">${esc(withDate(d))}</span>
+        <span class="r-score">${d.score}, ${esc(d.grade)}</span>
+        <span class="r-balls">Gets ${n} out of 4 soccer balls ${meter(n, 4)}</span>
+        <span class="r-meta">${esc(meta)}</span>
+      </button></li>`;
+    }).join('');
   }
 
   // ---------- strip
@@ -418,9 +420,9 @@ footer a { color: var(--ink-2); }
     const tiles = days.map((d, i) => {
       const s = skyOf(d);
       return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--s:${d.score};--i:${i}"
-          aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d.top_pick ? ' Best pick.' : ''}">
+          aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d._rank ? ` Ranked number ${d._rank}.` : ''}">
         <span class="head">
-          ${d.top_pick ? PAW : ''}
+          ${d._rank ? `<span class="pick" aria-hidden="true">${d._rank}</span>` : ''}
           <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
           <span class="dt">${fmtShort(d.date)}</span>
           <span class="cond">${icon(s.icon)}${esc(s.label)}</span>
@@ -586,6 +588,10 @@ footer a { color: var(--ink-2); }
       });
     });
     select(0);
+    document.querySelectorAll('.rank').forEach(b => b.addEventListener('click', () => {
+      const i = days.findIndex(d => d.date === b.dataset.date);
+      if (i >= 0) { select(i); $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }));
 
     // Fade the right edge while more days are hidden off-screen.
     const stripEl = document.querySelector('.strip'), wrapEl = document.querySelector('.strip-wrap');
