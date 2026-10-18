@@ -153,7 +153,7 @@ button { font: inherit; color: inherit; }
 .day .feels { display: block; font-size: 13px; color: var(--ink-2); }
 .day .feels b { font-size: 15px; color: var(--ink); }
 .day .score { display: block; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.04em; margin-top: auto; padding: 8px 0 6px; position: relative; z-index: 1; }
-.day .grass { display: block; margin: 0 -11px; height: var(--h); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
+.day .grass { display: block; margin: 0 -11px; height: calc(8px + var(--s) * 0.62px); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
 .day .grass::before { /* blades along the top edge */
   content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 7px;
   background: radial-gradient(4px 7px at 4px 7px, var(--lawn-hi) 98%, transparent) 0 0 / 8px 7px repeat-x;
@@ -164,7 +164,12 @@ button { font: inherit; color: inherit; }
 .balls { display: inline-flex; gap: 3px; margin-right: 3px; vertical-align: -3px; }
 .balls svg { width: 17px; height: 17px; }
 .balls svg.off { opacity: .22; }
-.fact .balls svg { width: 19px; height: 19px; }
+.fact-score { align-items: flex-start; }
+.score-lines { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+.score-lines b { font-size: 26px; }
+.balls-line { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 4px 8px; color: var(--ink-2); font-size: 14px; }
+.balls-line .balls { margin: 0; vertical-align: 0; }
+.balls-line .balls svg { width: 20px; height: 20px; }
 @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (prefers-reduced-motion: reduce) { .day .grass { animation: none; } .day, .day:hover { transition: none; transform: none; } }
 
@@ -229,8 +234,30 @@ footer a { color: var(--ink-2); }
   .hero { grid-template-columns: 1fr; padding-top: 28px; gap: 22px; }
   .detail { grid-template-columns: 1fr; padding: 20px; gap: 26px; }
   .explain { grid-template-columns: 1fr; gap: 18px; }
-  .strip { grid-template-columns: repeat(10, 84px); }
+  .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; overflow: visible; margin: 0; padding: 4px 0 6px; }
+  .strip-wrap::after { display: none; }
   .swipe { display: inline; }
+  .day { min-height: 0; }
+  .day .head { padding: 8px 7px 7px; }
+  .day .wd { font-size: 16px; }
+  .day .dt { font-size: 12px; }
+  .day .cond { flex-direction: column; align-items: flex-start; gap: 2px; margin-top: 5px; font-size: 12px; }
+  .day .icon { width: 20px; height: 20px; }
+  .day .pick { width: 18px; height: 18px; top: 7px; right: 6px; }
+  .day .body { padding: 6px 7px 0; }
+  .day .feels { font-size: 12px; }
+  .day .feels b { font-size: 14px; }
+  .day .score { font-size: 26px; padding: 6px 0 4px; }
+  .day .grass { margin: 0 -7px; height: calc(6px + var(--s) * 0.36px); }
+}
+@media (max-width: 400px) {
+  .strip { gap: 5px; }
+  .day .head { padding: 7px 6px 6px; }
+  .day .body { padding: 5px 6px 0; }
+  .day .feels { font-size: 11px; }
+  .day .wd { font-size: 15px; }
+  .day .dt, .day .cond { font-size: 11px; }
+  .day .grass { margin: 0 -6px; }
 }
 @media (max-width: 480px) {
   .wrap { padding: 16px 16px 40px; }
@@ -374,20 +401,23 @@ footer a { color: var(--ink-2); }
     $('headline').textContent = head;
     $('lede').textContent = lede;
     const facts = [
-      ['Score', `${best.score}, ${best.grade}`, meter(STEPS[best.grade], 4)],
       ['Nice hours outside', `${best.nice_hours} of ${best.total_hours}`],
       best.best_window ? ['Best stretch', best.best_window.label] : null,
       best.afternoon ? ['Afternoon', best.afternoon.flag] : null,
     ].filter(Boolean);
-    $('heroFacts').innerHTML = facts.map(([k, v, extra]) => `<div class="fact"><span>${esc(k)}</span><b>${extra || ''}${esc(v)}</b></div>`).join('');
+    const n = STEPS[best.grade];
+    const scoreRow = `<div class="fact fact-score"><span>Score</span><div class="score-lines">
+        <b>${best.score}, ${esc(best.grade)}</b>
+        <div class="balls-line">${esc(dayName(best))} gets ${n} out of 4 soccer balls ${meter(n, 4)}</div>
+      </div></div>`;
+    $('heroFacts').innerHTML = scoreRow + facts.map(([k, v]) => `<div class="fact"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
   }
 
   // ---------- strip
   function strip(days) {
     const tiles = days.map((d, i) => {
       const s = skyOf(d);
-      const h = Math.round(8 + d.score * 0.62);   // grass height in px, 8 to 70
-      return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--h:${h}px;--i:${i}"
+      return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--s:${d.score};--i:${i}"
           aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d.top_pick ? ' Best pick.' : ''}">
         <span class="head">
           ${d.top_pick ? PAW : ''}
@@ -403,7 +433,7 @@ footer a { color: var(--ink-2); }
         </span>
       </button>`;
     }).join('');
-    return `<div class="strip-head"><h2>The next ten days</h2><span class="swipe">Swipe to see all ten. Tap a day for details.</span>
+    return `<div class="strip-head"><h2>The next ten days</h2><span class="swipe">Tap a day for details.</span>
       <div class="legend" aria-hidden="true">
         <span><i style="background:var(--c-cool)"></i>Cool: feels under 80°F</span>
         <span><i style="background:var(--c-warm)"></i>Warm: 80 to 87°F</span>
