@@ -42,6 +42,9 @@ SUNSET_BUFFER_MIN = 30                # day ends this many minutes before sunset
 AFTERNOON_START = 13                  # "afternoon" runs from 1 PM to the end of the day
 NORMALS_END_HOUR = 19                 # fixed daylight window (7 AM to 7 PM) used for humidity normals
 SUMMER_MONTH = 7                      # comparison month for the afternoon check (July)
+# Concession Stand (food for backyard wildlife): open when the air is forecast this cold or colder.
+# 32F is freezing; 35F counts as "close to freezing".
+STAND_OPEN_F = 35.0
 # Afternoon check labels, by hottest afternoon feels-like (rule of thumb, not a vet standard)
 AFTERNOON_EASY_F, AFTERNOON_WATCH_F = 80.0, 90.0
 STRETCH_HOURS = 4                     # length of the "best stretch" shown each day
@@ -510,6 +513,9 @@ def build_days(nws_hours, nws_text, om_hours, normals, now, lat, lon):
         dews = [x["dew"] for x in hours if x["dew"] is not None]
         dew_mean = sum(dews) / len(dews) if dews else None
         temps_all = [v["t"] for _, v in all_h]
+        # Coldest hour still ahead on this date, any time of day or night (for the Concession Stand).
+        ahead = [(t, v) for t, v in all_h if t >= this_hour]
+        cold_t, cold_v = min(ahead, key=lambda tv: tv[1]["t"]) if ahead else (None, None)
         nws_share = sum(1 for x in hours if x["src"] == "nws") / len(hours)
 
         normal = (normals or {}).get("by_date", {}).get(d.strftime("%m-%d")) if normals_ok else None
@@ -551,7 +557,8 @@ def build_days(nws_hours, nws_text, om_hours, normals, now, lat, lon):
                      "mean_pop": round(sum(x["pop"] for x in hours) / len(hours))},
             "temp": {"high": round(max(temps_all)), "low": round(min(temps_all)),
                      "feels_high": round(feels_high),
-                     "normal_high": round(normal["high"]) if normal else None},
+                     "normal_high": round(normal["high"]) if normal else None,
+                     "coldest": ({"t": round(cold_v["t"]), "time": fmt_hour(cold_t.hour)} if cold_v else None)},
             "dew": {"mean": round(dew_mean) if dew_mean is not None else None,
                     "normal": round(normal["dew"]) if normal else None,
                     "anomaly": anomaly},
@@ -631,6 +638,7 @@ def main() -> int:
         "day_hours": f"{fmt_hour(DAY_START)} until {SUNSET_BUFFER_MIN} minutes before sunset",
         "summer_ref": (normals or {}).get("summer_ref"),
         "afternoon_rule": [AFTERNOON_EASY_F, AFTERNOON_WATCH_F],
+        "stand_open_f": STAND_OPEN_F,
         "stretch_hours": STRETCH_HOURS,
         "nice_rule": [NICE_FEELS_F, NICE_POP],
         "weights": {"rain": W_RAIN, "temp": W_TEMP, "humidity": W_HUMID},

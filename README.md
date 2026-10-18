@@ -26,6 +26,8 @@ Great is 75+, Good 60 to 74, Fair 45 to 59, Rough below 45. Each day also shows 
 
 The **afternoon check** (1 PM until he comes in) compares the hottest the afternoon will feel with a typical July afternoon at the same spot, averaged over the same 20 years. Labels: 80°F or cooler is an easy afternoon, 81 to 90°F means keep an eye on him, above 90°F means short visits only.
 
+The **Concession Stand** box (food for backyard wildlife) opens when any hour is forecast at 35°F or colder, and says which evening to put food out. Change `STAND_OPEN_F` in `scripts/build_forecast.py` to adjust.
+
 These rules are a rule of thumb, not a veterinary standard. The numbers live at the top of `scripts/build_forecast.py` if you want to tune them.
 
 ## Privacy

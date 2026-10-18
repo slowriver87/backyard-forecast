@@ -120,6 +120,19 @@ button { font: inherit; color: inherit; }
 .r-balls .balls { margin: 0; }
 .r-balls .balls svg { width: 20px; height: 20px; }
 .r-meta { color: var(--ink-3); font-size: 14px; margin-top: 4px; }
+.stand { margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+.stand.open { border: 2px solid var(--c-cool); padding: 17px; }
+.stand-icon { grid-row: span 3; width: 44px; height: 44px; color: var(--ink-3); }
+.stand.open .stand-icon { color: var(--c-cool); }
+.stand-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.stand h2 { font-family: var(--display); font-size: 20px; letter-spacing: -0.015em; margin: 0; }
+.stand-state { font-weight: 700; font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--panel-2); color: var(--ink-2); }
+.stand.open .stand-state { background: var(--c-cool); color: var(--c-cool-fg); }
+.stand-msg { font-size: 16px; margin: 2px 0 0; }
+.stand ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.stand li { background: var(--panel-2); border-radius: var(--r-sm); padding: 9px 12px; font-size: 15px; }
+.stand li b { font-family: var(--display); }
+.stand-note { grid-column: 2; color: var(--ink-3); font-size: 13px; margin-top: 6px; }
 @media (min-width: 861px) { .r-balls .balls { flex-basis: 100%; } }
 .notes { margin: 0 0 16px; padding: 12px 16px; border-radius: var(--r-md); background: var(--panel-2); color: var(--ink-2); font-size: 15px; border-left: 4px solid var(--watch); }
 .notes:empty { display: none; }
@@ -240,6 +253,9 @@ footer a { color: var(--ink-2); }
 @media (max-width: 860px) {
   .hero { padding-top: 28px; }
   .podium { grid-template-columns: 1fr; gap: 10px; }
+  .stand { gap: 4px 12px; }
+  .stand-icon { grid-row: auto; width: 34px; height: 34px; align-self: center; }
+  .stand-msg, .stand ul, .stand-note { grid-column: 1 / -1; }
   .detail { grid-template-columns: 1fr; padding: 20px; gap: 26px; }
   .explain { grid-template-columns: 1fr; gap: 18px; }
   .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; overflow: visible; margin: 0; padding: 4px 0 6px; }
@@ -304,6 +320,7 @@ footer a { color: var(--ink-2); }
       <p id="lede">Ten days of weather, scored for the hours he spends outside watching birds and rabbits.</p>
     </div>
     <ol class="podium" id="podium" aria-label="Top three days, ranked"></ol>
+    <section class="stand" id="stand" aria-labelledby="standTitle"></section>
   </section>
 
   <div class="notes" id="notes"></div>
@@ -327,6 +344,7 @@ footer a { color: var(--ink-2); }
       <p><b>Feels like</b> is the National Weather Service heat index. Below about 80°F it equals the air temperature.</p>
       <p><b>Nice hours</b> are daylight hours <span id="niceRule">80°F or cooler (feels like) with under a 30% chance of rain</span>.</p>
       <p><b>Afternoon check</b> compares the hottest the afternoon will feel with a typical July afternoon at the same spot<span id="summerRef"></span>. <span id="pmRule">80°F or cooler is an easy afternoon. 81 to 90°F means keep an eye on him. Above 90°F means short visits only.</span></p>
+      <p><b>Concession Stand</b> opens when the forecast air temperature reaches 35°F or colder at any hour, day or night. Freezing is 32°F. If the coldest point is in the early morning, it says to put food out the evening before.</p>
       <p><b>Best stretch of the day</b> is the <span id="stretchLen">4</span>-hour block with the best mix of low rain chance and cooler feels-like temperature.</p>
     </section>
     <section>
@@ -413,6 +431,47 @@ footer a { color: var(--ink-2); }
         <span class="r-meta">${esc(meta)}</span>
       </button></li>`;
     }).join('');
+  }
+
+  // ---------- concession stand (food for backyard wildlife on freezing nights)
+  const STAND_ICON = '<svg class="stand-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l2.5-5h19L28 9z" fill="currentColor"/><path d="M4 9h6v1.5a3 3 0 0 1-6 0zM16 9h6v1.5a3 3 0 0 1-6 0z" fill="currentColor"/><path d="M10 9h6v1.5a3 3 0 0 1-6 0zM22 9h6v1.5a3 3 0 0 1-6 0z" fill="currentColor" opacity=".45"/><path d="M6 13v14M26 13v14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="4" y="19" width="24" height="3.2" rx="1.2" fill="currentColor"/><circle cx="11" cy="17" r="1.6" fill="currentColor"/><circle cx="16" cy="16.6" r="2" fill="currentColor"/><circle cx="21" cy="17" r="1.6" fill="currentColor"/></svg>';
+  function addDays(iso, n) { const d = dateOf(iso); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+  function stand(data) {
+    const days = data.days, dog = data.dog || 'Maximus';
+    const lim = data.stand_open_f ?? 35;
+    const gen = new Date(data.generated_at);
+    const todayISO = `${gen.getFullYear()}-${String(gen.getMonth() + 1).padStart(2, '0')}-${String(gen.getDate()).padStart(2, '0')}`;
+    const cold = days.filter(d => d.temp.coldest && d.temp.coldest.t <= lim);
+    const el = $('stand');
+    const rule = `Opens when it is forecast to get down to ${lim}°F or colder. Freezing is 32°F.`;
+    if (cold.length) {
+      const items = cold.map(d => {
+        const c = d.temp.coldest, am = /AM$/.test(c.time);
+        let when;
+        if (am) {
+          const prev = addDays(d.date, -1);
+          when = d.date === todayISO ? 'now' : prev === todayISO ? 'tonight' : `${dateOf(prev).toLocaleDateString(undefined, { weekday: 'long' })} evening`;
+        } else {
+          when = d.date === todayISO ? 'this evening' : `${midSentence(d).replace(/, .*$/, '')} evening`;
+        }
+        const level = c.t <= 32 ? 'Freezing.' : 'Close to freezing.';
+        return `<li><b>${esc(withDate(d))}</b>: low of ${c.t}°F around ${esc(c.time)}. ${level} Put food out ${esc(when)}.</li>`;
+      }).join('');
+      el.className = 'stand open';
+      el.innerHTML = `${STAND_ICON}
+        <div class="stand-top"><h2 id="standTitle">Concession Stand</h2><span class="stand-state">Open</span></div>
+        <p class="stand-msg">Open the Concession Stand for ${esc(dog)}'s friends on ${cold.length === 1 ? 'this night' : 'these nights'}.</p>
+        <ul>${items}</ul>
+        <div class="stand-note">${rule}</div>`;
+    } else {
+      const withC = days.filter(d => d.temp.coldest);
+      const min = withC.length ? withC.reduce((a, b) => (b.temp.coldest.t < a.temp.coldest.t ? b : a)) : null;
+      el.className = 'stand';
+      el.innerHTML = `${STAND_ICON}
+        <div class="stand-top"><h2 id="standTitle">Concession Stand</h2><span class="stand-state">Closed</span></div>
+        <p class="stand-msg">Concession Stand can be closed. Weather is good for ${esc(dog)}'s friends.</p>
+        <div class="stand-note">${min ? `Coldest point in the next ten days: ${min.temp.coldest.t}°F, ${esc(midSentence(min))} around ${esc(min.temp.coldest.time)}. ` : ''}${rule}</div>`;
+    }
   }
 
   // ---------- strip
@@ -568,6 +627,7 @@ footer a { color: var(--ink-2); }
 
     const days = data.days;
     hero(data);
+    stand(data);
     const table = `<div class="sr"><table><caption>Daily backyard scores</caption><tr><th>Day</th><th>Score</th><th>Grade</th><th>Rain %</th><th>Feels like °F</th><th>Dew point °F</th><th>Nice hours</th></tr>${
       days.map(d => `<tr><td>${esc(d.label)} ${d.date}</td><td>${d.score}</td><td>${d.grade}</td><td>${d.rain.max_pop}</td><td>${d.temp.feels_high}</td><td>${d.dew.mean ?? ''}</td><td>${d.nice_hours} of ${d.total_hours}</td></tr>`).join('')}</table></div>`;
     $('app').innerHTML = strip(days) + table + '<section class="detail" id="detail" role="tabpanel" aria-live="polite"></section>';
