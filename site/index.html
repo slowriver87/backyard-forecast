@@ -181,6 +181,8 @@ button { font: inherit; color: inherit; }
 .day .body { display: flex; flex-direction: column; flex: 1; padding: 9px 11px 0; color: var(--ink); }
 .day .feels { display: block; font-size: 13px; color: var(--ink-2); }
 .day .feels b { font-size: 15px; color: var(--ink); }
+.score-lbl { display: block; font-family: var(--body); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 2px; }
+.r-lbl { font-family: var(--body); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-right: 6px; vertical-align: 0.35em; }
 .day .score { display: block; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.04em; margin-top: auto; padding: 8px 0 6px; position: relative; z-index: 1; }
 .day .grass { display: block; margin: 0 -11px; height: calc(8px + var(--s) * 0.62px); background: linear-gradient(180deg, var(--lawn-hi), var(--lawn) 60%); position: relative; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
 .day .grass::before { /* blades along the top edge */
@@ -431,7 +433,7 @@ footer a { color: var(--ink-2); }
         ${medal(d._rank)}
         <span class="r-num" aria-hidden="true">${d._rank}</span>
         <span class="r-day">${esc(withDate(d))}</span>
-        <span class="r-score">${d.score}, ${esc(d.grade)}</span>
+        <span class="r-score"><span class="r-lbl">Score</span>${d.score}, ${esc(d.grade)}</span>
         <span class="r-balls">Gets ${n} out of 4 soccer balls ${meter(n, 4)}</span>
         <span class="r-meta">${esc(meta)}</span>
       </button></li>`;
@@ -511,7 +513,7 @@ footer a { color: var(--ink-2); }
         <span class="body">
           <span class="feels"><b>${d.temp.feels_high}°</b> feels</span>
           <span class="feels">${d.rain.max_pop}% rain</span>
-          <span class="score">${d.score}</span>
+          <span class="score"><span class="score-lbl">Score</span>${d.score}</span>
           <span class="grass" aria-hidden="true"></span>
         </span>
       </button>`;
