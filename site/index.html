@@ -503,7 +503,7 @@ footer a { color: var(--ink-2); }
     const tiles = days.map((d, i) => {
       const s = skyOf(d);
       return `<button class="day ${s.cls}" role="tab" id="tab-${i}" aria-controls="detail" aria-selected="false" data-i="${i}" style="--s:${d.score};--i:${i}"
-          aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. Feels like ${d.temp.feels_high} degrees. Rain ${d.rain.max_pop} percent.${d._rank ? ` Ranked number ${d._rank}.` : ''}">
+          aria-label="${esc(dayName(d))} ${fmtShort(d.date)}. Score ${d.score}, ${d.grade}. ${esc(s.label)}. High ${d.temp.high} degrees, feels like ${d.temp.feels_high}. Rain ${d.rain.max_pop} percent.${d._rank ? ` Ranked number ${d._rank}.` : ''}">
         <span class="head">
           ${d._rank ? medal(d._rank) : ''}
           <span class="wd">${esc(d.label === 'Today' ? 'Today' : d.weekday)}</span>
@@ -511,7 +511,8 @@ footer a { color: var(--ink-2); }
           <span class="cond">${icon(s.icon)}${esc(s.label)}</span>
         </span>
         <span class="body">
-          <span class="feels"><b>${d.temp.feels_high}°</b> feels</span>
+          <span class="feels"><b>${d.temp.high}°</b> high</span>
+          <span class="feels">feels ${d.temp.feels_high}°</span>
           <span class="feels">${d.rain.max_pop}% rain</span>
           <span class="score"><span class="score-lbl">Score</span>${d.score}</span>
           <span class="grass" aria-hidden="true"></span>
@@ -608,7 +609,7 @@ footer a { color: var(--ink-2); }
         <div class="stats">
           <div class="stat"><span>Nice hours outside</span><b>${d.nice_hours} of ${d.total_hours}</b></div>
           <div class="stat"><span>Rain chance, worst hour</span><b>${d.rain.max_pop}%</b></div>
-          <div class="stat"><span>Feels like, hottest</span><b>${d.temp.feels_high}°F</b><small>High ${d.temp.high}°, low ${d.temp.low}°${d.temp.normal_high != null ? `, normal high ${d.temp.normal_high}°` : ''}</small></div>
+          <div class="stat"><span>Feels like, hottest</span><b>${d.temp.feels_high}°F</b><small>Actual high ${d.temp.high}°${d.label === 'Today' ? '' : `, low ${d.temp.low}°`}${d.temp.normal_high != null ? `, normal high ${d.temp.normal_high}°` : ''}</small></div>
           <div class="stat"><span>Dew point</span><b>${dew}</b><small>${esc(dewNote)}</small></div>
         </div>
         ${bw ? `<div class="stretch">${icon('sun', '')}<div><b>Best stretch of the day: ${esc(bw.label)}</b><div>Feels like ${bw.feels}°F at most, ${bw.pop}% chance of rain.</div></div></div>` : ''}
