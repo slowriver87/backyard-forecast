@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy_retry.outputs.page_url || steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,6 +53,18 @@ jobs:
         with:
           path: site
 
+      # GitHub sometimes cannot see the artifact for a moment after it is uploaded,
+      # which fails the publish. If that happens, wait and try once more.
       - name: Publish
         id: deploy
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait before retrying publish
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 30
+
+      - name: Publish (retry)
+        id: deploy_retry
+        if: steps.deploy.outcome == 'failure'
         uses: actions/deploy-pages@v4
